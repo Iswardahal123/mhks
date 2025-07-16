@@ -70,15 +70,6 @@
       background-color: #2ecc71;
       color: white;
     }
-
-    .edit-btn {
-      background-color: #f39c12;
-      color: white;
-    }
-
-    .hidden {
-      display: none;
-    }
   </style>
 </head>
 <body>
@@ -106,7 +97,7 @@
     const accessInfo = document.getElementById('access-info');
 
     if (access === 'user') {
-      accessInfo.innerText = "✅ Logged-in: Full Access";
+      accessInfo.innerText = "✅ Logged-in: Full Access (View Only)";
     } else {
       accessInfo.innerText = "👁️ Guest Mode: View Only";
     }
@@ -117,7 +108,7 @@
       'Tilaram Boral', 'Shyam Gurung', 'Binod Porajuli', 'Bhuban Sapkota', 'Surja Poudel',
       'Khemraj Poudel', 'Prem Poudel', 'Rupnarayan Sitola', 'Keshab gajurel', 'Kishore Dahal',
       'Khemraj Rijal', 'Sagar Sapkota', 'Lila Timsina', 'Ganesh Karki', 'Man Br Rai',
-      'Mon Br Subba', 'Ganesh Dhungana', 'Hari Singh Mohara', 'Ram br basnet', 'Debi Prashad Dhakal',
+      'Man Br Subba', 'Ganesh Dhungana', 'Hari Singh Mohora', 'Ram br basnet', 'Debi Prashad Dhakal',
       'Sekhar Sharmah', 'Ramlal Dhakal', 'Durga timsina'
     ];
 
@@ -127,22 +118,17 @@
       const tr = document.createElement('tr');
 
       const viewBtn = `<button class="btn view-btn" onclick="viewUser('${name}')">View</button>`;
-      const editBtn = `<button class="btn edit-btn ${access !== 'user' ? 'hidden' : ''}" onclick="editUser('${name}')">Edit</button>`;
 
       tr.innerHTML = `
         <td>${index + 1}</td>
         <td>${name}</td>
-        <td>${viewBtn} ${editBtn}</td>
+        <td>${viewBtn}</td>
       `;
       tbody.appendChild(tr);
     });
 
     function viewUser(name) {
       alert("👁️ Viewing: " + name);
-    }
-
-    function editUser(name) {
-      alert("✏️ Editing: " + name);
     }
   </script>
 
