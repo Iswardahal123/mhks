@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f6f8;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #2c3e50;
+    }
+
+    .access-mode {
+      text-align: center;
+      color: #e74c3c;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .table-container {
+      max-width: 800px;
+      margin: 0 auto;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      overflow-y: auto;
+      max-height: 500px;
+      background-color: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background-color: #3498db;
+      color: white;
+      position: sticky;
+      top: 0;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 5px;
+    }
+
+    .view-btn {
+      background-color: #2ecc71;
+      color: white;
+    }
+
+    .edit-btn {
+      background-color: #f39c12;
+      color: white;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Welcome to Dashboard</h1>
+  <div class="access-mode" id="access-info"></div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>S.No</th>
+          <th>Name</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="user-table-body">
+        <!-- JS will insert rows here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const access = localStorage.getItem('auth');
+    const accessInfo = document.getElementById('access-info');
+
+    if (access === 'user') {
+      accessInfo.innerText = "✅ Logged-in: Full Access";
+    } else {
+      accessInfo.innerText = "👁️ Guest Mode: View Only";
+    }
+
+    const names = [
+      'Bikash Sitola','Durga Sharmah', 'Purna Chapagain', 'Raju Bajgain', 'Krishna Bajgain', 'Baburam Ram Poudel',
+      'Tanka Boral', 'Churamoni Ojha', 'Bikash Koirala', 'Dipak Koirala', 'Bhuban Sharmah',
+      'Tilaram Boral', 'Shyam Gurung', 'Binod Porajuli', 'Bhuban Sapkota', 'Surja Poudel',
+      'Khemraj Poudel', 'Prem Poudel', 'Rupnarayan Sitola', 'Keshab gajurel', 'Kishore Dahal',
+      'Khemraj Rijal', 'Sagar Sapkota', 'Lila Timsina', 'Ganesh Karki', 'Man Br Rai',
+      'Mon Br Subba', 'Ganesh Dhungana', 'Hari Singh Mohara', 'Ram br basnet', 'Debi Prashad Dhakal',
+      'Sekhar Sharmah', 'Ramlal Dhakal', 'Durga timsina'
+    ];
+
+    const tbody = document.getElementById('user-table-body');
+
+    names.forEach((name, index) => {
+      const tr = document.createElement('tr');
+
+      const viewBtn = `<button class="btn view-btn" onclick="viewUser('${name}')">View</button>`;
+      const editBtn = `<button class="btn edit-btn ${access !== 'user' ? 'hidden' : ''}" onclick="editUser('${name}')">Edit</button>`;
+
+      tr.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${name}</td>
+        <td>${viewBtn} ${editBtn}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    function viewUser(name) {
+      alert("👁️ Viewing: " + name);
+    }
+
+    function editUser(name) {
+      alert("✏️ Editing: " + name);
+    }
+  </script>
+
+</body>
+</html>
