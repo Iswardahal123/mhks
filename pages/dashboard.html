@@ -1,16 +1,21 @@
-<h1>Dashboard</h1>
-<p>Members list:</p>
+<h1 style="font-size: 24px;">Dashboard</h1>
+<p style="font-size: 16px;">Members List</p>
 
-<div style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; border-radius: 8px;">
-  <table style="width: 100%; border-collapse: collapse;">
+<div style="overflow-x: auto; border: 1px solid #ccc; border-radius: 8px; max-width: 100%;">
+  <table style="width: 100%; min-width: 350px; border-collapse: collapse;">
     <thead style="background: #3498db; color: white;">
       <tr>
-        <th style="padding: 10px;">Name</th>
-        <th style="padding: 10px;">Action</th>
+        <th style="padding: 12px; text-align: left;">Name</th>
+        <th style="padding: 12px; text-align: left;">Action</th>
       </tr>
     </thead>
     <tbody id="name-table">
-      <!-- Filled via JS -->
+      <!-- Names injected via JS -->
     </tbody>
   </table>
 </div>
+
+
+
+
+
