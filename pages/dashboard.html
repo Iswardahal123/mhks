@@ -1,21 +1,137 @@
-<h1 style="font-size: 24px;">Dashboard</h1>
-<p style="font-size: 16px;">Members List</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mobile SPA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
 
-<div style="overflow-x: auto; border: 1px solid #ccc; border-radius: 8px; max-width: 100%;">
-  <table style="width: 100%; min-width: 350px; border-collapse: collapse;">
-    <thead style="background: #3498db; color: white;">
-      <tr>
-        <th style="padding: 12px; text-align: left;">Name</th>
-        <th style="padding: 12px; text-align: left;">Action</th>
-      </tr>
-    </thead>
-    <tbody id="name-table">
-      <!-- Names injected via JS -->
-    </tbody>
-  </table>
-</div>
+    #app {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
 
+    nav.bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #000;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 10px 0;
+      z-index: 100;
+    }
 
+    nav.bottom-nav a {
+      color: #fff;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 12px;
+    }
 
+    nav.bottom-nav a i {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
 
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
 
+    table td, table th {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    table th {
+      background: #eee;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app">
+    <h2>Loading...</h2>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="#attendance"><i class="fa fa-calendar-check-o"></i><span>Attendance</span></a>
+    <a href="#totals"><i class="fa fa-bar-chart"></i><span>Totals</span></a>
+    <a href="#dashboard"><i class="fa fa-home"></i><span>Dashboard</span></a>
+    <a href="#collection"><i class="fa fa-rupee"></i><span>Collection</span></a>
+    <a href="#members"><i class="fa fa-users"></i><span>Members</span></a>
+  </nav>
+
+  <script>
+    const names = [
+      'Bikash Sitola','Durga Sharmah','Purna Chapagain','Raju Bajgain','Krishna Bajgain','Baburam Ram Poudel',
+      'Tanka Boral','Churamoni Ojha','Bikash Koirala','Dipak Koirala','Bhuban Sharmah','Tilaram Boral','Shyam Gurung',
+      'Binod Porajuli','Bhuban Sapkota','Surja Poudel','Khemraj Poudel','Prem Poudel','Rupnarayan Sitola',
+      'Keshab gajurel','Kishore Dahal','Khemraj Rijal','Sagar Sapkota','Lila Timsina','Ganesh Karki',
+      'Man Br Rai','Man Br Subba','Ganesh Dhungana','Hari Singh Mohora','Ram br basnet','Debi Prashad Dhakal',
+      'Sekhar Sharmah','Ramlal Dhakal','Durga timsina'
+    ];
+
+    function loadPage(page) {
+      const app = document.getElementById("app");
+
+      if (page === "dashboard") {
+        app.innerHTML = `
+          <h2>Dashboard</h2>
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr><th>Name</th><th>Action</th></tr>
+              </thead>
+              <tbody id="name-table"></tbody>
+            </table>
+          </div>`;
+        injectNames();
+      } else {
+        app.innerHTML = `<h2>${capitalize(page)} Page</h2><p>Content for ${page} goes here...</p>`;
+      }
+    }
+
+    function injectNames() {
+      const tbody = document.getElementById("name-table");
+      names.forEach(name => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${name}</td><td><button style="padding:5px 10px;">View</button></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    window.addEventListener("hashchange", () => {
+      const page = location.hash.replace("#", "") || "dashboard";
+      loadPage(page);
+    });
+
+    window.addEventListener("load", () => {
+      const page = location.hash.replace("#", "") || "dashboard";
+      loadPage(page);
+    });
+  </script>
+</body>
+</html>
