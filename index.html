@@ -2,154 +2,112 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login | Firebase Auth</title>
+  <title>SPA Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <style>
+    @import url('https://fonts.googleapis.com/css?family=Titillium+Web:300');
+
     body {
       margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to right, #2c3e50, #3498db);
-      height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
       display: flex;
-      justify-content: center;
+    }
+
+    .main-menu {
+      background: #212121;
+      width: 60px;
+      position: fixed;
+      height: 100vh;
+      overflow: hidden;
+      transition: width 0.3s;
+      z-index: 1000;
+    }
+
+    .main-menu:hover {
+      width: 250px;
+    }
+
+    .main-menu ul {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .main-menu li {
+      width: 100%;
+    }
+
+    .main-menu li a {
+      display: flex;
       align-items: center;
+      padding: 15px;
+      color: #ccc;
+      text-decoration: none;
+      transition: background 0.3s;
     }
 
-    .login-box {
-      background: #fff;
-      padding: 40px 30px;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-      width: 100%;
-      max-width: 400px;
+    .main-menu li a:hover {
+      background: #000;
+      color: #fff;
     }
 
-    .login-box h2 {
+    .main-menu i {
+      width: 30px;
       text-align: center;
-      color: #2c3e50;
-      margin-bottom: 20px;
+      font-size: 18px;
     }
 
-    .input-group {
-      margin-bottom: 20px;
+    .nav-text {
+      margin-left: 10px;
+      white-space: nowrap;
+      font-family: 'Titillium Web', sans-serif;
     }
 
-    .input-group label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: bold;
-      color: #2c3e50;
-    }
-
-    .input-group input {
+    .content {
+      margin-left: 60px;
+      padding: 20px;
       width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 16px;
     }
 
-    .login-btn {
-      width: 100%;
-      background: #3498db;
-      color: white;
-      padding: 12px;
-      border: none;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    .login-btn:hover {
-      background: #2980b9;
-    }
-
-    #message {
-      text-align: center;
-      margin-top: 15px;
-      font-weight: bold;
-    }
-
-    .error {
-      color: red;
-    }
-
-    .success {
-      color: green;
+    .main-menu:hover + .content {
+      margin-left: 250px;
+      transition: margin 0.3s;
     }
   </style>
 </head>
 <body>
 
-  <div class="login-box">
-    <h2>Login</h2>
-    <form id="login-form">
-      <div class="input-group">
-        <label for="email">Email</label>
-        <input type="text" id="email" placeholder="Enter your email" required>
-      </div>
+  <!-- Sidebar -->
+  <nav class="main-menu">
+    <ul>
+      <li><a href="#dashboard"><i class="fa fa-home"></i><span class="nav-text">Dashboard</span></a></li>
+      <li><a href="#profile"><i class="fa fa-user"></i><span class="nav-text">Profile</span></a></li>
+      <li><a href="#settings"><i class="fa fa-cog"></i><span class="nav-text">Settings</span></a></li>
+      <li><a href="#logout"><i class="fa fa-power-off"></i><span class="nav-text">Logout</span></a></li>
+    </ul>
+  </nav>
 
-      <div class="input-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" placeholder="Enter your password" required>
-      </div>
-
-      <button class="login-btn" type="submit">Login</button>
-    </form>
-
-    <button class="login-btn" style="background-color: #2ecc71;" onclick="continueWithoutLogin()">Continue Without Login</button>
-
-    <div id="message"></div>
+  <!-- Main Content -->
+  <div class="content" id="app">
+    <h2>Welcome</h2>
+    <p>Select a menu to begin.</p>
   </div>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth-compat.js"></script>
-
   <script>
-    // Firebase Config
-    const firebaseConfig = {
-      apiKey: "AIzaSyCyibssZJsYwzI_2VXwC98iUGix2IkFczM",
-      authDomain: "iswar-121d6.firebaseapp.com",
-      projectId: "iswar-121d6",
-      storageBucket: "iswar-121d6.firebasestorage.app",
-      messagingSenderId: "696246777134",
-      appId: "1:696246777134:web:065951d401a56d8c7d76bf",
-      measurementId: "G-HG807RGEGJ"
-    };
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    // Login Submit
-    document.getElementById('login-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-
-      auth.signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          document.getElementById('message').innerHTML = `<p class="success">✅ Login successful! Redirecting...</p>`;
-          localStorage.setItem('auth', 'user'); // Store login state
-
-          setTimeout(() => {
-            window.location.href = "dashboard.html";
-          }, 1500);
-        })
-        .catch((error) => {
-          document.getElementById('message').innerHTML = `<p class="error">❌ ${error.message}</p>`;
-        });
-    });
-
-    // Continue Without Login
-    function continueWithoutLogin() {
-      localStorage.setItem('auth', 'guest');
-      window.location.href = "dashboard.html";
+    async function loadPage(page) {
+      const res = await fetch(`pages/${page}.html`);
+      const content = await res.text();
+      document.getElementById('app').innerHTML = content;
     }
-  </script>
 
+    function handleRouting() {
+      const page = window.location.hash.replace('#', '') || 'dashboard';
+      loadPage(page);
+    }
+
+    window.addEventListener('hashchange', handleRouting);
+    window.addEventListener('load', handleRouting);
+  </script>
 </body>
 </html>
