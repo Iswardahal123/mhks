@@ -2,163 +2,136 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Mobile SPA Dashboard</title>
+  <title>Mobile SPA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <style>
     body {
       margin: 0;
-      background: linear-gradient(to right, #f12711, #f5af19);
       font-family: 'Segoe UI', sans-serif;
-    }
-
-    .wrapper {
-      max-width: 420px;
-      margin: 0 auto;
-    }
-
-    .phone {
-      border: 2px solid #eee;
-      background: #fff;
-      border-radius: 2em;
-      position: relative;
-      min-height: 100vh;
-      box-shadow: 0 40px 80px rgba(0,0,0,0.15);
+      background: #f4f6f8;
+      height: 100vh;
       overflow: hidden;
       display: flex;
       flex-direction: column;
     }
 
     #app {
-      flex-grow: 1;
-      padding: 1rem;
+      flex: 1;
       overflow-y: auto;
+      padding: 20px;
     }
 
-    .nav--icons {
-      position: sticky;
+    nav.bottom-nav {
+      position: fixed;
       bottom: 0;
-      background: white;
-      padding: 0.5em 1em;
-      border-top: 1px solid #ccc;
-    }
-
-    .nav--icons ul {
-      list-style: none;
+      width: 100%;
+      background: #000;
       display: flex;
-      justify-content: space-between;
-      margin: 0;
-      padding: 0;
+      justify-content: space-around;
+      align-items: center;
+      padding: 10px 0;
+      z-index: 100;
     }
 
-    .nav--icons li a {
-      font-size: 12px;
-      color: #000;
+    nav.bottom-nav a {
+      color: #fff;
       text-decoration: none;
-      text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 0.5em 0.75em;
-      transition: 0.3s ease;
-      border-radius: 1em;
+      font-size: 12px;
     }
 
-    .nav--icons li a:hover,
-    .nav--icons li a.active {
-      background: black;
-      color: white;
+    nav.bottom-nav a i {
+      font-size: 20px;
+      margin-bottom: 4px;
     }
 
-    .nav--icons svg {
-      margin-bottom: 5px;
-      fill: currentColor;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    table td, table th {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    table th {
+      background: #eee;
+      text-align: left;
     }
   </style>
 </head>
 <body>
 
-  <div class="wrapper">
-    <div class="phone">
-      
-      <!-- Dynamic Content Area -->
-      <div id="app">
-        <h2>Loading...</h2>
-      </div>
-
-      <!-- Bottom Navigation -->
-      <nav class="nav nav--icons">
-        <ul>
-          <li><a href="#attendance" id="nav-attendance"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M4 4h16v2H4V4zm0 5h16v2H4V9zm0 5h10v2H4v-2z"/></svg><span>Attendance</span></a></li>
-          <li><a href="#totals" id="nav-totals"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 17h18v2H3v-2zm0-5h12v2H3v-2zm0-5h6v2H3V7z"/></svg><span>Totals</span></a></li>
-          <li><a href="#dashboard" id="nav-dashboard" class="active"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span>Dashboard</span></a></li>
-          <li><a href="#collection" id="nav-collection"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 4h18v2H3zm0 5h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg><span>Collection</span></a></li>
-          <li><a href="#members" id="nav-members"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 12c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4zm0-2a4 4 0 100-8 4 4 0 000 8z"/></svg><span>Members</span></a></li>
-        </ul>
-      </nav>
-    </div>
+  <div id="app">
+    <h2>Loading...</h2>
   </div>
 
-  <!-- Routing Script -->
-  <script>
-    async function loadPage(page) {
-      try {
-        const res = await fetch(`pages/${page}.html`);
-        if (!res.ok) throw new Error("Page not found");
-        const html = await res.text();
-        document.getElementById('app').innerHTML = html;
+  <nav class="bottom-nav">
+    <a href="#attendance"><i class="fa fa-calendar-check-o"></i><span>Attendance</span></a>
+    <a href="#totals"><i class="fa fa-bar-chart"></i><span>Totals</span></a>
+    <a href="#dashboard"><i class="fa fa-home"></i><span>Dashboard</span></a>
+    <a href="#collection"><i class="fa fa-rupee"></i><span>Collection</span></a>
+    <a href="#members"><i class="fa fa-users"></i><span>Members</span></a>
+  </nav>
 
-        if (page === "dashboard") {
-          injectNames();
-        }
-      } catch (e) {
-        document.getElementById('app').innerHTML = "<h3>Page not found.</h3>";
+  <script>
+    const names = [
+      'Bikash Sitola','Durga Sharmah','Purna Chapagain','Raju Bajgain','Krishna Bajgain','Baburam Ram Poudel',
+      'Tanka Boral','Churamoni Ojha','Bikash Koirala','Dipak Koirala','Bhuban Sharmah','Tilaram Boral','Shyam Gurung',
+      'Binod Porajuli','Bhuban Sapkota','Surja Poudel','Khemraj Poudel','Prem Poudel','Rupnarayan Sitola',
+      'Keshab gajurel','Kishore Dahal','Khemraj Rijal','Sagar Sapkota','Lila Timsina','Ganesh Karki',
+      'Man Br Rai','Man Br Subba','Ganesh Dhungana','Hari Singh Mohora','Ram br basnet','Debi Prashad Dhakal',
+      'Sekhar Sharmah','Ramlal Dhakal','Durga timsina'
+    ];
+
+    function loadPage(page) {
+      const app = document.getElementById("app");
+
+      if (page === "dashboard") {
+        app.innerHTML = `
+          <h2>Dashboard</h2>
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr><th>Name</th><th>Action</th></tr>
+              </thead>
+              <tbody id="name-table"></tbody>
+            </table>
+          </div>`;
+        injectNames();
+      } else {
+        app.innerHTML = `<h2>${capitalize(page)} Page</h2><p>Content for ${page} goes here...</p>`;
       }
     }
 
     function injectNames() {
-      const names = [
-        'Bikash Sitola','Durga Sharmah','Purna Chapagain','Raju Bajgain','Krishna Bajgain','Baburam Ram Poudel',
-        'Tanka Boral','Churamoni Ojha','Bikash Koirala','Dipak Koirala','Bhuban Sharmah','Tilaram Boral',
-        'Shyam Gurung','Binod Porajuli','Bhuban Sapkota','Surja Poudel','Khemraj Poudel','Prem Poudel',
-        'Rupnarayan Sitola','Keshab gajurel','Kishore Dahal','Khemraj Rijal','Sagar Sapkota','Lila Timsina',
-        'Ganesh Karki','Man Br Rai','Man Br Subba','Ganesh Dhungana','Hari Singh Mohora','Ram br basnet',
-        'Debi Prashad Dhakal','Sekhar Sharmah','Ramlal Dhakal','Durga timsina'
-      ];
-
-      const table = document.getElementById("name-table");
-      if (!table) return;
-
+      const tbody = document.getElementById("name-table");
       names.forEach(name => {
-        const row = document.createElement("tr");
-        const tdName = document.createElement("td");
-        tdName.textContent = name;
-
-        const tdView = document.createElement("td");
-        tdView.innerHTML = `<button style="padding:5px 10px;">View</button>`;
-
-        row.appendChild(tdName);
-        row.appendChild(tdView);
-        table.appendChild(row);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${name}</td><td><button style="padding:5px 10px;">View</button></td>`;
+        tbody.appendChild(tr);
       });
     }
 
-    function setActiveLink(hash) {
-      document.querySelectorAll('.nav--icons a').forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === hash) {
-          link.classList.add('active');
-        }
-      });
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
-    function handleRouting() {
+    window.addEventListener("hashchange", () => {
       const page = location.hash.replace("#", "") || "dashboard";
-      setActiveLink(`#${page}`);
       loadPage(page);
-    }
+    });
 
-    window.addEventListener('hashchange', handleRouting);
-    window.addEventListener('load', handleRouting);
+    window.addEventListener("load", () => {
+      const page = location.hash.replace("#", "") || "dashboard";
+      loadPage(page);
+    });
   </script>
 </body>
 </html>
