@@ -68,6 +68,8 @@
       margin-left: 60px;
       padding: 20px;
       width: 100%;
+      min-height: 100vh;
+      background: #f4f6f8;
     }
 
     .main-menu:hover + .content {
@@ -84,21 +86,27 @@
       <li><a href="#dashboard"><i class="fa fa-home"></i><span class="nav-text">Dashboard</span></a></li>
       <li><a href="#profile"><i class="fa fa-user"></i><span class="nav-text">Profile</span></a></li>
       <li><a href="#settings"><i class="fa fa-cog"></i><span class="nav-text">Settings</span></a></li>
-      <li><a href="#logout"><i class="fa fa-power-off"></i><span class="nav-text">Logout</span></a></li>
+      <li><a href="login.html"><i class="fa fa-power-off"></i><span class="nav-text">Logout</span></a></li>
     </ul>
   </nav>
 
-  <!-- Main Content -->
+  <!-- Main Content Area -->
   <div class="content" id="app">
     <h2>Welcome</h2>
-    <p>Select a menu to begin.</p>
+    <p>Select an option from the sidebar.</p>
   </div>
 
+  <!-- JS Routing -->
   <script>
     async function loadPage(page) {
-      const res = await fetch(`pages/${page}.html`);
-      const content = await res.text();
-      document.getElementById('app').innerHTML = content;
+      try {
+        const res = await fetch(`pages/${page}.html`);
+        if (!res.ok) throw new Error("Page not found");
+        const content = await res.text();
+        document.getElementById('app').innerHTML = content;
+      } catch (e) {
+        document.getElementById('app').innerHTML = "<h3>Page not found.</h3>";
+      }
     }
 
     function handleRouting() {
@@ -109,5 +117,6 @@
     window.addEventListener('hashchange', handleRouting);
     window.addEventListener('load', handleRouting);
   </script>
+
 </body>
 </html>
