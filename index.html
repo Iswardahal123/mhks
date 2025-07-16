@@ -2,198 +2,163 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>SPA Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <title>Mobile SPA Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    @import url('https://fonts.googleapis.com/css?family=Titillium+Web:300');
-
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
+      background: linear-gradient(to right, #f12711, #f5af19);
       font-family: 'Segoe UI', sans-serif;
-      display: flex;
-      flex-direction: row;
     }
 
-    .main-menu {
-      background: #212121;
-      width: 60px;
-      position: fixed;
-      height: 100vh;
-      overflow: hidden;
-      transition: width 0.3s;
-      z-index: 1000;
+    .wrapper {
+      max-width: 420px;
+      margin: 0 auto;
     }
 
-    .main-menu:hover {
-      width: 250px;
-    }
-
-    .main-menu ul {
-      padding: 0;
-      margin: 0;
-      list-style: none;
-    }
-
-    .main-menu li a {
-      display: flex;
-      align-items: center;
-      padding: 15px;
-      color: #ccc;
-      text-decoration: none;
-      transition: background 0.3s;
-    }
-
-    .main-menu li a:hover {
-      background: #000;
-      color: #fff;
-    }
-
-    .main-menu i {
-      width: 30px;
-      text-align: center;
-      font-size: 18px;
-    }
-
-    .nav-text {
-      margin-left: 10px;
-      white-space: nowrap;
-      font-family: 'Titillium Web', sans-serif;
-    }
-
-    .content {
-      margin-left: 60px;
-      padding: 20px;
-      width: 100%;
+    .phone {
+      border: 2px solid #eee;
+      background: #fff;
+      border-radius: 2em;
+      position: relative;
       min-height: 100vh;
-      background: #f4f6f8;
-      transition: margin 0.3s;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
-    .main-menu:hover + .content {
-      margin-left: 250px;
+    #app {
+      flex-grow: 1;
+      padding: 1rem;
+      overflow-y: auto;
     }
 
-    /* Responsive Styles */
-    @media (max-width: 768px) {
-      body {
-        flex-direction: column;
-      }
+    .nav--icons {
+      position: sticky;
+      bottom: 0;
+      background: white;
+      padding: 0.5em 1em;
+      border-top: 1px solid #ccc;
+    }
 
-      .main-menu {
-        width: 100%;
-        height: auto;
-        position: relative;
-      }
+    .nav--icons ul {
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      margin: 0;
+      padding: 0;
+    }
 
-      .main-menu:hover {
-        width: 100%;
-      }
+    .nav--icons li a {
+      font-size: 12px;
+      color: #000;
+      text-decoration: none;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.5em 0.75em;
+      transition: 0.3s ease;
+      border-radius: 1em;
+    }
 
-      .main-menu ul {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-      }
+    .nav--icons li a:hover,
+    .nav--icons li a.active {
+      background: black;
+      color: white;
+    }
 
-      .main-menu li {
-        flex-grow: 1;
-      }
-
-      .nav-text {
-        display: none;
-      }
-
-      .content {
-        margin-left: 0 !important;
-        margin-top: 10px;
-      }
-
-      .main-menu:hover + .content {
-        margin-left: 0;
-      }
+    .nav--icons svg {
+      margin-bottom: 5px;
+      fill: currentColor;
     }
   </style>
 </head>
 <body>
 
-  <!-- Sidebar -->
-  <nav class="main-menu">
-    <ul>
-      <li><a href="#dashboard"><i class="fa fa-home"></i><span class="nav-text">Dashboard</span></a></li>
-      <li><a href="#profile"><i class="fa fa-user"></i><span class="nav-text">Profile</span></a></li>
-      <li><a href="#settings"><i class="fa fa-cog"></i><span class="nav-text">Settings</span></a></li>
-      <li><a href="login.html"><i class="fa fa-power-off"></i><span class="nav-text">Logout</span></a></li>
-    </ul>
-  </nav>
+  <div class="wrapper">
+    <div class="phone">
+      
+      <!-- Dynamic Content Area -->
+      <div id="app">
+        <h2>Loading...</h2>
+      </div>
 
-  <!-- Main Content Area -->
-  <div class="content" id="app">
-    <h2>Loading...</h2>
+      <!-- Bottom Navigation -->
+      <nav class="nav nav--icons">
+        <ul>
+          <li><a href="#attendance" id="nav-attendance"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M4 4h16v2H4V4zm0 5h16v2H4V9zm0 5h10v2H4v-2z"/></svg><span>Attendance</span></a></li>
+          <li><a href="#totals" id="nav-totals"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 17h18v2H3v-2zm0-5h12v2H3v-2zm0-5h6v2H3V7z"/></svg><span>Totals</span></a></li>
+          <li><a href="#dashboard" id="nav-dashboard" class="active"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span>Dashboard</span></a></li>
+          <li><a href="#collection" id="nav-collection"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 4h18v2H3zm0 5h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg><span>Collection</span></a></li>
+          <li><a href="#members" id="nav-members"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 12c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4zm0-2a4 4 0 100-8 4 4 0 000 8z"/></svg><span>Members</span></a></li>
+        </ul>
+      </nav>
+    </div>
   </div>
 
-  <!-- JavaScript for Routing -->
+  <!-- Routing Script -->
   <script>
     async function loadPage(page) {
-      console.log("Loading page:", page);
       try {
         const res = await fetch(`pages/${page}.html`);
         if (!res.ok) throw new Error("Page not found");
-        const content = await res.text();
-        document.getElementById('app').innerHTML = content;
+        const html = await res.text();
+        document.getElementById('app').innerHTML = html;
 
-        if (page === "dashboard") injectNames();
+        if (page === "dashboard") {
+          injectNames();
+        }
       } catch (e) {
         document.getElementById('app').innerHTML = "<h3>Page not found.</h3>";
-        console.error("Page load error:", e);
       }
     }
 
     function injectNames() {
       const names = [
         'Bikash Sitola','Durga Sharmah','Purna Chapagain','Raju Bajgain','Krishna Bajgain','Baburam Ram Poudel',
-        'Tanka Boral','Churamoni Ojha','Bikash Koirala','Dipak Koirala','Bhuban Sharmah','Tilaram Boral','Shyam Gurung',
-        'Binod Porajuli','Bhuban Sapkota','Surja Poudel','Khemraj Poudel','Prem Poudel','Rupnarayan Sitola',
-        'Keshab gajurel','Kishore Dahal','Khemraj Rijal','Sagar Sapkota','Lila Timsina','Ganesh Karki',
-        'Man Br Rai','Man Br Subba','Ganesh Dhungana','Hari Singh Mohora','Ram br basnet','Debi Prashad Dhakal',
-        'Sekhar Sharmah','Ramlal Dhakal','Durga timsina'
+        'Tanka Boral','Churamoni Ojha','Bikash Koirala','Dipak Koirala','Bhuban Sharmah','Tilaram Boral',
+        'Shyam Gurung','Binod Porajuli','Bhuban Sapkota','Surja Poudel','Khemraj Poudel','Prem Poudel',
+        'Rupnarayan Sitola','Keshab gajurel','Kishore Dahal','Khemraj Rijal','Sagar Sapkota','Lila Timsina',
+        'Ganesh Karki','Man Br Rai','Man Br Subba','Ganesh Dhungana','Hari Singh Mohora','Ram br basnet',
+        'Debi Prashad Dhakal','Sekhar Sharmah','Ramlal Dhakal','Durga timsina'
       ];
 
-      const tbody = document.getElementById('name-table');
-      if (!tbody) return;
+      const table = document.getElementById("name-table");
+      if (!table) return;
 
       names.forEach(name => {
-        const row = document.createElement('tr');
-
-        const tdName = document.createElement('td');
+        const row = document.createElement("tr");
+        const tdName = document.createElement("td");
         tdName.textContent = name;
-        tdName.style.padding = '10px';
-        tdName.style.borderBottom = '1px solid #ddd';
 
-        const tdAction = document.createElement('td');
-        tdAction.innerHTML = '<button style="padding: 6px 10px;">View</button>';
-        tdAction.style.padding = '10px';
-        tdAction.style.borderBottom = '1px solid #ddd';
+        const tdView = document.createElement("td");
+        tdView.innerHTML = `<button style="padding:5px 10px;">View</button>`;
 
         row.appendChild(tdName);
-        row.appendChild(tdAction);
+        row.appendChild(tdView);
+        table.appendChild(row);
+      });
+    }
 
-        tbody.appendChild(row);
+    function setActiveLink(hash) {
+      document.querySelectorAll('.nav--icons a').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === hash) {
+          link.classList.add('active');
+        }
       });
     }
 
     function handleRouting() {
-      const page = window.location.hash.replace('#', '') || 'dashboard';
+      const page = location.hash.replace("#", "") || "dashboard";
+      setActiveLink(`#${page}`);
       loadPage(page);
     }
 
     window.addEventListener('hashchange', handleRouting);
     window.addEventListener('load', handleRouting);
   </script>
-
 </body>
 </html>
