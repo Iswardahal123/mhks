@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login | Firebase Auth</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #2c3e50, #3498db);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-box {
+      background: #fff;
+      padding: 40px 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-box h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    .login-btn {
+      width: 100%;
+      background: #3498db;
+      color: white;
+      padding: 12px;
+      border: none;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .login-btn:hover {
+      background: #2980b9;
+    }
+
+    #message {
+      text-align: center;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .error {
+      color: red;
+    }
+
+    .success {
+      color: green;
+    }
+
+    .continue-btn {
+      background: transparent;
+      border: none;
+      color: #3498db;
+      text-align: center;
+      display: block;
+      width: 100%;
+      margin-top: 20px;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-box">
+    <h2>Login</h2>
+    <form id="login-form">
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Enter your email" required>
+      </div>
+
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter your password" required>
+      </div>
+
+      <button class="login-btn" type="submit">Login</button>
+      <div id="message"></div>
+    </form>
+
+    <button class="continue-btn" onclick="window.location.href='index.html#dashboard'">
+      Continue without Login
+    </button>
+  </div>
+
+  <!-- Firebase SDKs (Compat for simple HTML) -->
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth-compat.js"></script>
+
+  <script>
+    // ✅ Your Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCyibssZJsYwzI_2VXwC98iUGix2IkFczM",
+      authDomain: "iswar-121d6.firebaseapp.com",
+      projectId: "iswar-121d6",
+      storageBucket: "iswar-121d6.appspot.com",
+      messagingSenderId: "696246777134",
+      appId: "1:696246777134:web:065951d401a56d8c7d76bf",
+      measurementId: "G-HG807RGEGJ"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Login Logic
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          document.getElementById('message').innerHTML = `<p class="success">✅ Login successful!</p>`;
+          setTimeout(() => {
+            window.location.href = "index.html#dashboard";
+          }, 1000);
+        })
+        .catch((error) => {
+          document.getElementById('message').innerHTML = `<p class="error">❌ ${error.message}</p>`;
+        });
+    });
+  </script>
+
+</body>
+</html>
