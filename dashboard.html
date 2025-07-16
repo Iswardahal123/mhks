@@ -92,6 +92,16 @@
     </table>
   </div>
 
+  <div id="sidebar-placeholder"></div>
+<script>
+  fetch("sidebar.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("sidebar-placeholder").innerHTML = data;
+    });
+</script>
+
+
   <script>
     const access = localStorage.getItem('auth');
     const accessInfo = document.getElementById('access-info');
