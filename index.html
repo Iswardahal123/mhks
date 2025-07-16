@@ -1,122 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>SPA Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <style>
-    @import url('https://fonts.googleapis.com/css?family=Titillium+Web:300');
+<script>
+  async function loadPage(page) {
+    try {
+      const res = await fetch(`pages/${page}.html`);
+      if (!res.ok) throw new Error("Page not found");
+      const content = await res.text();
+      document.getElementById('app').innerHTML = content;
 
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      display: flex;
-    }
-
-    .main-menu {
-      background: #212121;
-      width: 60px;
-      position: fixed;
-      height: 100vh;
-      overflow: hidden;
-      transition: width 0.3s;
-      z-index: 1000;
-    }
-
-    .main-menu:hover {
-      width: 250px;
-    }
-
-    .main-menu ul {
-      padding: 0;
-      margin: 0;
-      list-style: none;
-    }
-
-    .main-menu li {
-      width: 100%;
-    }
-
-    .main-menu li a {
-      display: flex;
-      align-items: center;
-      padding: 15px;
-      color: #ccc;
-      text-decoration: none;
-      transition: background 0.3s;
-    }
-
-    .main-menu li a:hover {
-      background: #000;
-      color: #fff;
-    }
-
-    .main-menu i {
-      width: 30px;
-      text-align: center;
-      font-size: 18px;
-    }
-
-    .nav-text {
-      margin-left: 10px;
-      white-space: nowrap;
-      font-family: 'Titillium Web', sans-serif;
-    }
-
-    .content {
-      margin-left: 60px;
-      padding: 20px;
-      width: 100%;
-      min-height: 100vh;
-      background: #f4f6f8;
-    }
-
-    .main-menu:hover + .content {
-      margin-left: 250px;
-      transition: margin 0.3s;
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Sidebar -->
-  <nav class="main-menu">
-    <ul>
-      <li><a href="#dashboard"><i class="fa fa-home"></i><span class="nav-text">Dashboard</span></a></li>
-      <li><a href="#profile"><i class="fa fa-user"></i><span class="nav-text">Profile</span></a></li>
-      <li><a href="#settings"><i class="fa fa-cog"></i><span class="nav-text">Settings</span></a></li>
-      <li><a href="login.html"><i class="fa fa-power-off"></i><span class="nav-text">Logout</span></a></li>
-    </ul>
-  </nav>
-
-  <!-- Main Content Area -->
-  <div class="content" id="app">
-    <h2>Welcome</h2>
-    <p>Select an option from the sidebar.</p>
-  </div>
-
-  <!-- JS Routing -->
-  <script>
-    async function loadPage(page) {
-      try {
-        const res = await fetch(`pages/${page}.html`);
-        if (!res.ok) throw new Error("Page not found");
-        const content = await res.text();
-        document.getElementById('app').innerHTML = content;
-      } catch (e) {
-        document.getElementById('app').innerHTML = "<h3>Page not found.</h3>";
+      // ✅ After load, run name injection if page is dashboard
+      if (page === "dashboard") {
+        injectNames();
       }
+    } catch (e) {
+      document.getElementById('app').innerHTML = "<h3>Page not found.</h3>";
     }
+  }
 
-    function handleRouting() {
-      const page = window.location.hash.replace('#', '') || 'dashboard';
-      loadPage(page);
-    }
+  function injectNames() {
+    const names = [
+      'Bikash Sitola','Durga Sharmah','Purna Chapagain','Raju Bajgain','Krishna Bajgain','Baburam Ram Poudel',
+      'Tanka Boral','Churamoni Ojha','Bikash Koirala','Dipak Koirala','Bhuban Sharmah','Tilaram Boral','Shyam Gurung',
+      'Binod Porajuli','Bhuban Sapkota','Surja Poudel','Khemraj Poudel','Prem Poudel','Rupnarayan Sitola',
+      'Keshab gajurel','Kishore Dahal','Khemraj Rijal','Sagar Sapkota','Lila Timsina','Ganesh Karki',
+      'Man Br Rai','Man Br Subba','Ganesh Dhungana','Hari Singh Mohora','Ram br basnet','Debi Prashad Dhakal',
+      'Sekhar Sharmah','Ramlal Dhakal','Durga timsina'
+    ];
 
-    window.addEventListener('hashchange', handleRouting);
-    window.addEventListener('load', handleRouting);
-  </script>
+    const tbody = document.getElementById('name-table');
+    if (!tbody) return;
 
-</body>
-</html>
+    names.forEach(name => {
+      const row = document.createElement('tr');
+
+      const tdName = document.createElement('td');
+      tdName.textContent = name;
+      tdName.style.padding = '10px';
+      tdName.style.borderBottom = '1px solid #ddd';
+
+      const tdAction = document.createElement('td');
+      tdAction.innerHTML = '<button style="padding: 6px 10px;">View</button>';
+      tdAction.style.padding = '10px';
+      tdAction.style.borderBottom = '1px solid #ddd';
+
+      row.appendChild(tdName);
+      row.appendChild(tdAction);
+
+      tbody.appendChild(row);
+    });
+  }
+
+  function handleRouting() {
+    const page = window.location.hash.replace('#', '') || 'dashboard';
+    loadPage(page);
+  }
+
+  window.addEventListener('hashchange', handleRouting);
+  window.addEventListener('load', handleRouting);
+</script>
