@@ -1,160 +1,97 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f2f2f2;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    header {
-      background-color: #222;
-      color: white;
-      text-align: center;
-      padding: 1em;
-      font-size: 1.2em;
-    }
-
-    .main-content {
-      flex: 1;
-      overflow-y: auto;
-      padding: 1em;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: white;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    th, td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #eee;
-    }
-
-    th {
-      background-color: #f7f7f7;
-      font-weight: bold;
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-    /* Bottom Nav */
-    nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background-color: #000;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      padding: 0.5em 0;
-      z-index: 999;
-    }
-
-    nav a {
-      color: white;
-      text-align: center;
-      font-size: 0.75em;
-      text-decoration: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    nav svg {
-      width: 24px;
-      height: 24px;
-      margin-bottom: 4px;
-    }
-
-    /* Ensure enough bottom padding so content isn't hidden */
-   .main-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 1em;
-  padding-bottom: 100px; /* Add this line to make space for bottom nav */
-}
-
-  </style>
-</head>
-<body>
-  <header>
-    Dashboard - Member List
-  </header>
-
-  <div class="main-content">
+<div class="dashboard-container">
+  <h2>Dashboard</h2>
+  <div class="table-wrapper">
     <table>
       <thead>
-        <tr><th>#</th><th>Name</th></tr>
+        <tr>
+          <th>Name</th>
+          <th>Action</th>
+        </tr>
       </thead>
-      <tbody id="member-list">
-        <!-- JavaScript will inject rows here -->
+      <tbody id="dashboard-table-body">
+        <!-- Member rows will be inserted here -->
       </tbody>
     </table>
   </div>
+</div>
 
-  <nav>
-    <a href="#attendance">
-      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M21 4H3c-1.1 0-2 .9-2 2v2h22V6c0-1.1-.9-2-2-2zM1 18c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V10H1v8z"/></svg>
-      <span>Attendance</span>
-    </a>
-    <a href="#totals">
-      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M3 3h18v2H3V3zm0 4h12v2H3V7zm0 4h18v2H3v-2zm0 4h12v2H3v-2zm0 4h18v2H3v-2z"/></svg>
-      <span>Totals</span>
-    </a>
-    <a href="#dashboard">
-      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-      <span>Dashboard</span>
-    </a>
-    <a href="#collection">
-      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M21 6h-2V4a2 2 0 00-2-2H7a2 2 0 00-2 2v2H3c-1.1 0-2 .9-2 2v12a2 2 0 002 2h18a2 2 0 002-2V8a2 2 0 00-2-2zM7 4h10v2H7V4zm14 16H3V8h18v12z"/></svg>
-      <span>Collection</span>
-    </a>
-    <a href="#members">
-      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-      <span>Members</span>
-    </a>
-  </nav>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  <script>
-    const names = [
-      'Bikash Sitola','Durga Sharmah','Purna Chapagain','Raju Bajgain','Krishna Bajgain','Baburam Ram Poudel',
-      'Tanka Boral','Churamoni Ojha','Bikash Koirala','Dipak Koirala','Bhuban Sharmah','Tilaram Boral',
-      'Shyam Gurung','Binod Porajuli','Bhuban Sapkota','Surja Poudel','Khemraj Poudel','Prem Poudel',
-      'Rupnarayan Sitola','Keshab Gajurel','Kishore Dahal','Khemraj Rijal','Sagar Sapkota','Lila Timsina',
-      'Ganesh Karki','Man Br Rai','Man Br Subba','Ganesh Dhungana','Hari Singh Mohora','Ram Br Basnet',
-      'Debi Prashad Dhakal','Sekhar Sharmah','Ramlal Dhakal','Durga Timsina'
-    ];
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
 
-    const tbody = document.getElementById("member-list");
-    names.forEach((name, index) => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td>${index + 1}</td><td>${name}</td>`;
-      tbody.appendChild(tr);
-    });
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
- 
-  </script>
-</body>
-</html>
+  const memberNames = [
+    'Bikash Sitola','Durga Sharmah','Purna Chapagain','Raju Bajgain','Krishna Bajgain','Baburam Ram Poudel',
+    'Tanka Boral','Churamoni Ojha','Bikash Koirala','Dipak Koirala','Bhuban Sharmah','Tilaram Boral',
+    'Shyam Gurung','Binod Porajuli','Bhuban Sapkota','Surja Poudel','Khemraj Poudel'
+  ];
+
+  const tbody = document.getElementById("dashboard-table-body");
+
+  memberNames.forEach(name => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${name}</td>
+      <td><button class="view-btn">View</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+</script>
+
+<style>
+  .dashboard-container {
+    padding: 10px;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .table-wrapper {
+    max-height: 400px;
+    overflow-y: auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    padding-bottom: 60px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  table th, table td {
+    padding: 12px;
+    border-bottom: 1px solid #ccc;
+    text-align: left;
+  }
+
+  table th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+  }
+
+  .view-btn {
+    padding: 6px 12px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .view-btn:hover {
+    background-color: #0056b3;
+  }
+</style>
