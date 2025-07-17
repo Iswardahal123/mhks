@@ -89,11 +89,13 @@
     }
 
     /* Ensure enough bottom padding so content isn't hidden */
-    .main-content::after {
-      content: "";
-      display: block;
-      height: 80px; /* equal or more than nav height */
-    }
+   .main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1em;
+  padding-bottom: 100px; /* Add this line to make space for bottom nav */
+}
+
   </style>
 </head>
 <body>
