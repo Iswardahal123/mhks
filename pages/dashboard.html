@@ -1,98 +1,136 @@
-<div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+    }
+
+    h2 {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .table-container {
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+      margin: 0 10px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table thead {
+      position: sticky;
+      top: 0;
+      background-color: #ddd;
+    }
+
+    table th, table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    table td button {
+      padding: 6px 10px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    table td button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
   <h2>Dashboard</h2>
-  <div class="table-wrapper">
+  <div class="table-container">
     <table>
       <thead>
         <tr>
           <th>Name</th>
+          <th>Action</th>
         </tr>
       </thead>
-      <tbody id="dashboard-table-body"></tbody>
+      <tbody id="member-table">
+        <!-- Rows will be added by JS -->
+      </tbody>
     </table>
   </div>
-</div>
 
-<script type="module">
-  // Firebase imports
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCyibssZJsYwzI_2VXwC98iUGix2IkFczM",
-    authDomain: "iswar-121d6.firebaseapp.com",
-    projectId: "iswar-121d6",
-    storageBucket: "iswar-121d6.appspot.com",
-    messagingSenderId: "696246777134",
-    appId: "1:696246777134:web:065951d401a56d8c7d76bf",
-    measurementId: "G-HG807RGEGJ"
-  };
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCyibssZJsYwzI_2VXwC98iUGix2IkFczM",
+      authDomain: "iswar-121d6.firebaseapp.com",
+      projectId: "iswar-121d6",
+      storageBucket: "iswar-121d6.appspot.com",
+      messagingSenderId: "696246777134",
+      appId: "1:696246777134:web:065951d401a56d8c7d76bf",
+      measurementId: "G-HG807RGEGJ"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-  async function loadDashboardData() {
-    const tableBody = document.getElementById("dashboard-table-body");
-    tableBody.innerHTML = "";
+    const fallbackNames = [
+      'Bikash Sitola','Durga Sharmah','Purna Chapagain','Raju Bajgain','Krishna Bajgain','Baburam Ram Poudel',
+      'Tanka Boral','Churamoni Ojha','Bikash Koirala','Dipak Koirala','Bhuban Sharmah','Tilaram Boral','Shyam Gurung',
+      'Binod Porajuli','Bhuban Sapkota','Surja Poudel','Khemraj Poudel','Prem Poudel','Rupnarayan Sitola',
+      'Keshab Gajurel','Kishore Dahal','Khemraj Rijal','Sagar Sapkota','Lila Timsina','Ganesh Karki',
+      'Man Br Rai','Man Br Subba','Ganesh Dhungana','Hari Singh Mohora','Ram Br Basnet','Debi Prashad Dhakal',
+      'Sekhar Sharmah','Ramlal Dhakal','Durga Timsina','Mahadev'
+    ];
 
-    // Load data from 'members' collection or use default names (as discussed)
-    const membersRef = collection(db, "members");
-    const snapshot = await getDocs(membersRef);
+    async function loadMembers() {
+      const tbody = document.getElementById("member-table");
+      tbody.innerHTML = "";
 
-    if (snapshot.empty) {
-      // fallback static list if no firestore data
-      const names = [
-        'Bikash Sitola','Durga Sharmah','Purna Chapagain','Raju Bajgain','Krishna Bajgain','Baburam Ram Poudel',
-        'Tanka Boral','Churamoni Ojha','Bikash Koirala','Dipak Koirala','Bhuban Sharmah','Tilaram Boral','Shyam Gurung',
-        'Binod Porajuli','Bhuban Sapkota','Surja Poudel','Khemraj Poudel','Prem Poudel','Rupnarayan Sitola',
-        'Keshab gajurel','Kishore Dahal','Khemraj Rijal','Sagar Sapkota','Lila Timsina','Ganesh Karki',
-        'Man Br Rai','Man Br Subba','Ganesh Dhungana','Hari Singh Mohora','Ram br basnet','Debi Prashad Dhakal',
-        'Sekhar Sharmah','Ramlal Dhakal','Durga timsina','mahadev'
-      ];
-
-      names.forEach(name => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${name}</td>`;
-        tableBody.appendChild(tr);
-      });
-    } else {
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${data.name || doc.id}</td>`;
-        tableBody.appendChild(tr);
-      });
+      try {
+        const snapshot = await db.collection("members").get();
+        if (!snapshot.empty) {
+          snapshot.forEach(doc => {
+            const name = doc.data().name;
+            addRow(tbody, name);
+          });
+        } else {
+          // Use fallback list if collection empty
+          fallbackNames.forEach(name => addRow(tbody, name));
+        }
+      } catch (err) {
+        console.error("Error fetching members:", err);
+        fallbackNames.forEach(name => addRow(tbody, name));
+      }
     }
-  }
 
-  loadDashboardData();
-</script>
+    function addRow(tbody, name) {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${name}</td>
+        <td><button onclick="alert('Viewing ${name}')">View</button></td>
+      `;
+      tbody.appendChild(row);
+    }
 
-<style>
-  .table-wrapper {
-    max-height: 400px;
-    overflow-y: auto;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    padding-bottom: 60px;
-    margin-top: 10px;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  th, td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
-    font-size: 14px;
-    text-align: left;
-  }
-
-  th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-  }
-</style>
-
+    window.addEventListener("load", loadMembers);
+  </script>
+</body>
+</html>
