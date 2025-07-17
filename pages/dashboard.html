@@ -1,96 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #f4f6f8;
-    }
-
     h2 {
       text-align: center;
-      margin: 20px 0;
+      margin-bottom: 20px;
     }
 
-    .table-container {
-      max-height: calc(100vh - 120px);
-      overflow-y: auto;
-      margin: 0 10px;
+    .table-wrapper {
       background: white;
       border-radius: 8px;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+      overflow-y: auto;
+      max-height: 75vh;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-    }
-
-    table thead {
-      position: sticky;
-      top: 0;
-      background-color: #ddd;
-    }
-
-    table th, table td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #ccc;
       font-size: 14px;
     }
 
-    table td button {
-      padding: 6px 10px;
-      background: #007bff;
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    button {
+      padding: 6px 12px;
+      background-color: #007bff;
       color: white;
       border: none;
       border-radius: 4px;
       cursor: pointer;
     }
 
-    table td button:hover {
-      background: #0056b3;
+    button:hover {
+      background-color: #0056b3;
     }
   </style>
 </head>
 <body>
+
   <h2>Dashboard</h2>
-  <div class="table-container">
+  <div class="table-wrapper">
     <table>
       <thead>
-        <tr>
-          <th>Name</th>
-          <th>Action</th>
-        </tr>
+        <tr><th>Name</th><th>Action</th></tr>
       </thead>
-      <tbody id="member-table">
-        <!-- Rows will be added by JS -->
-      </tbody>
+      <tbody id="member-table"></tbody>
     </table>
   </div>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyCyibssZJsYwzI_2VXwC98iUGix2IkFczM",
-      authDomain: "iswar-121d6.firebaseapp.com",
-      projectId: "iswar-121d6",
-      storageBucket: "iswar-121d6.appspot.com",
-      messagingSenderId: "696246777134",
-      appId: "1:696246777134:web:065951d401a56d8c7d76bf",
-      measurementId: "G-HG807RGEGJ"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
     const fallbackNames = [
       'Bikash Sitola','Durga Sharmah','Purna Chapagain','Raju Bajgain','Krishna Bajgain','Baburam Ram Poudel',
       'Tanka Boral','Churamoni Ojha','Bikash Koirala','Dipak Koirala','Bhuban Sharmah','Tilaram Boral','Shyam Gurung',
@@ -99,27 +69,6 @@
       'Man Br Rai','Man Br Subba','Ganesh Dhungana','Hari Singh Mohora','Ram Br Basnet','Debi Prashad Dhakal',
       'Sekhar Sharmah','Ramlal Dhakal','Durga Timsina','Mahadev'
     ];
-
-    async function loadMembers() {
-      const tbody = document.getElementById("member-table");
-      tbody.innerHTML = "";
-
-      try {
-        const snapshot = await db.collection("members").get();
-        if (!snapshot.empty) {
-          snapshot.forEach(doc => {
-            const name = doc.data().name;
-            addRow(tbody, name);
-          });
-        } else {
-          // Use fallback list if collection empty
-          fallbackNames.forEach(name => addRow(tbody, name));
-        }
-      } catch (err) {
-        console.error("Error fetching members:", err);
-        fallbackNames.forEach(name => addRow(tbody, name));
-      }
-    }
 
     function addRow(tbody, name) {
       const row = document.createElement("tr");
@@ -130,7 +79,10 @@
       tbody.appendChild(row);
     }
 
-    window.addEventListener("load", loadMembers);
+    window.addEventListener("DOMContentLoaded", () => {
+      const tbody = document.getElementById("member-table");
+      fallbackNames.forEach(name => addRow(tbody, name));
+    });
   </script>
 </body>
 </html>
