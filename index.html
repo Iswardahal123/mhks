@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Mobile SPA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
   <style>
     body {
       margin: 0;
@@ -48,42 +48,27 @@
       margin-bottom: 4px;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
+    /* Loading Spinner */
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #000;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 40px auto;
     }
 
-    table td, table th {
-      padding: 10px;
-      border-bottom: 1px solid #ccc;
-      font-size: 14px;
-    }
-
-    table th {
-      background: #eee;
-      text-align: left;
-    }
-
-    .table-wrapper {
-      max-height: 400px;
-      overflow-y: auto;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      padding-bottom: 60px; /* Space for bottom nav */
-    }
-
-    select, input[type="number"] {
-      padding: 6px;
-      font-size: 13px;
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
 
   <div id="app">
-    <h2>Loading...</h2>
+    <div class="loader"></div>
   </div>
 
   <nav class="bottom-nav">
@@ -95,129 +80,31 @@
   </nav>
 
   <script>
-    const names = [
-      'Bikash Sitola','Durga Sharmah','Purna Chapagain','Raju Bajgain','Krishna Bajgain','Baburam Ram Poudel',
-      'Tanka Boral','Churamoni Ojha','Bikash Koirala','Dipak Koirala','Bhuban Sharmah','Tilaram Boral','Shyam Gurung',
-      'Binod Porajuli','Bhuban Sapkota','Surja Poudel','Khemraj Poudel','Prem Poudel','Rupnarayan Sitola',
-      'Keshab gajurel','Kishore Dahal','Khemraj Rijal','Sagar Sapkota','Lila Timsina','Ganesh Karki',
-      'Man Br Rai','Man Br Subba','Ganesh Dhungana','Hari Singh Mohora','Ram br basnet','Debi Prashad Dhakal',
-      'Sekhar Sharmah','Ramlal Dhakal','Durga timsina','mahadev' // 34th
-    ];
+    const app = document.getElementById("app");
 
-    function loadPage(page) {
-      const app = document.getElementById("app");
-
-      if (page === "dashboard") {
-        app.innerHTML = `
-          <h2>Dashboard</h2>
-          <div class="table-wrapper">
-            <table>
-              <thead><tr><th>Name</th><th>Action</th></tr></thead>
-              <tbody id="name-table"></tbody>
-            </table>
-          </div>`;
-        const tbody = document.getElementById("name-table");
-        names.forEach(name => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `<td>${name}</td><td><button>View</button></td>`;
-          tbody.appendChild(tr);
-        });
-      }
-
-      else if (page === "attendance") {
-        app.innerHTML = `
-          <h2>Attendance</h2>
-          <label>Select Group:</label>
-          <select id="groupSelect" onchange="renderAttendanceTable(this.value)">
-            <option value="Palsur">Palsur</option>
-            <option value="Special">Special</option>
-          </select>
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Status</th>
-                  <th>Bheti ₹</th>
-                </tr>
-              </thead>
-              <tbody id="attendance-table"></tbody>
-            </table>
-          </div>`;
-        renderAttendanceTable("Palsur");
-      }
-
-      else {
-        app.innerHTML = `<h2>${capitalize(page)} Page</h2><p>Content for ${page} goes here...</p>`;
+    async function loadPage(page) {
+      try {
+        const response = await fetch(`pages/${page}.html`);
+        if (!response.ok) throw new Error('Page not found');
+        const content = await response.text();
+        app.innerHTML = content;
+        window.scrollTo(0, 0); // reset scroll
+      } catch (error) {
+        app.innerHTML = `<h2 style="color:red; text-align:center;">404 - Page Not Found</h2>`;
       }
     }
 
-    function renderAttendanceTable(type) {
-      const tbody = document.getElementById("attendance-table");
-      tbody.innerHTML = "";
-
-      const currentNames = type === "Special" ? names : names.slice(0, 17);
-
-      currentNames.forEach((name, index) => {
-        const tr = document.createElement("tr");
-
-        // Name
-        const tdName = document.createElement("td");
-        tdName.textContent = name;
-
-        // Dropdown
-        const tdStatus = document.createElement("td");
-        const select = document.createElement("select");
-        select.innerHTML = `
-          <option value="Present">Present</option>
-          <option value="Absent">Absent</option>
-          <option value="Paal">Paal</option>`;
-        select.classList.add("status-dropdown");
-        select.setAttribute("data-index", index);
-        select.onchange = handlePaalSelection;
-
-        tdStatus.appendChild(select);
-
-        // Bheti input
-        const tdAmount = document.createElement("td");
-        const input = document.createElement("input");
-        input.type = "number";
-        input.placeholder = "₹";
-        input.style.width = "60px";
-        tdAmount.appendChild(input);
-
-        tr.appendChild(tdName);
-        tr.appendChild(tdStatus);
-        tr.appendChild(tdAmount);
-        tbody.appendChild(tr);
-      });
-    }
-
-    function handlePaalSelection(e) {
-      const selected = e.target;
-      if (selected.value === "Paal") {
-        document.querySelectorAll(".status-dropdown").forEach(drop => {
-          if (drop !== selected && drop.value === "Paal") {
-            drop.value = "Present"; // reset others
-          }
-        });
-      }
-    }
-
-    function capitalize(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-
-    window.addEventListener("hashchange", () => {
+    function handleHashChange() {
       const page = location.hash.replace("#", "") || "dashboard";
       loadPage(page);
-    });
+    }
 
-    window.addEventListener("load", () => {
-      const page = location.hash.replace("#", "") || "dashboard";
-      loadPage(page);
-    });
+    window.addEventListener("hashchange", handleHashChange);
+    window.addEventListener("load", handleHashChange);
   </script>
-
 </body>
 </html>
+
+
+
+
