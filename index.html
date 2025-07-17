@@ -6,10 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
@@ -23,14 +19,12 @@
     #app {
       flex: 1;
       overflow-y: auto;
-      padding: 16px;
-      padding-bottom: 80px; /* Extra bottom space for fixed nav */
+      padding: 20px;
     }
 
     nav.bottom-nav {
       position: fixed;
       bottom: 0;
-      left: 0;
       width: 100%;
       background: #000;
       display: flex;
@@ -54,47 +48,35 @@
       margin-bottom: 4px;
     }
 
-    .table-wrapper {
-      max-height: 70vh;
-      overflow-y: auto;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
     table {
       width: 100%;
       border-collapse: collapse;
+      margin-top: 10px;
     }
 
-    table th,
-    table td {
-      padding: 12px;
+    table td, table th {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
       font-size: 14px;
-      border-bottom: 1px solid #e0e0e0;
-      text-align: left;
     }
 
     table th {
-      background-color: #f0f0f0;
-      font-weight: 600;
+      background: #eee;
+      text-align: left;
     }
 
-    table tr:hover {
-      background-color: #f9f9f9;
+    .table-wrapper {
+      max-height: 400px;
+      overflow-y: auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding-bottom: 60px; /* Space for bottom nav */
     }
 
-    button.view-btn {
-      padding: 6px 12px;
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    button.view-btn:hover {
-      background-color: #0056b3;
+    select, input[type="number"] {
+      padding: 6px;
+      font-size: 13px;
     }
   </style>
 </head>
@@ -119,7 +101,7 @@
       'Binod Porajuli','Bhuban Sapkota','Surja Poudel','Khemraj Poudel','Prem Poudel','Rupnarayan Sitola',
       'Keshab gajurel','Kishore Dahal','Khemraj Rijal','Sagar Sapkota','Lila Timsina','Ganesh Karki',
       'Man Br Rai','Man Br Subba','Ganesh Dhungana','Hari Singh Mohora','Ram br basnet','Debi Prashad Dhakal',
-      'Sekhar Sharmah','Ramlal Dhakal','Durga timsina','Mahadev'
+      'Sekhar Sharmah','Ramlal Dhakal','Durga timsina','mahadev' // 34th
     ];
 
     function loadPage(page) {
@@ -130,26 +112,96 @@
           <h2>Dashboard</h2>
           <div class="table-wrapper">
             <table>
-              <thead>
-                <tr><th>Name</th><th>Action</th></tr>
-              </thead>
+              <thead><tr><th>Name</th><th>Action</th></tr></thead>
               <tbody id="name-table"></tbody>
             </table>
           </div>`;
-        injectNames();
-      } else {
+        const tbody = document.getElementById("name-table");
+        names.forEach(name => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td>${name}</td><td><button>View</button></td>`;
+          tbody.appendChild(tr);
+        });
+      }
+
+      else if (page === "attendance") {
+        app.innerHTML = `
+          <h2>Attendance</h2>
+          <label>Select Group:</label>
+          <select id="groupSelect" onchange="renderAttendanceTable(this.value)">
+            <option value="Palsur">Palsur</option>
+            <option value="Special">Special</option>
+          </select>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Status</th>
+                  <th>Bheti ₹</th>
+                </tr>
+              </thead>
+              <tbody id="attendance-table"></tbody>
+            </table>
+          </div>`;
+        renderAttendanceTable("Palsur");
+      }
+
+      else {
         app.innerHTML = `<h2>${capitalize(page)} Page</h2><p>Content for ${page} goes here...</p>`;
       }
     }
 
-    function injectNames() {
-      const tbody = document.getElementById("name-table");
+    function renderAttendanceTable(type) {
+      const tbody = document.getElementById("attendance-table");
       tbody.innerHTML = "";
-      names.forEach(name => {
+
+      const currentNames = type === "Special" ? names : names.slice(0, 17);
+
+      currentNames.forEach((name, index) => {
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${name}</td><td><button class="view-btn">View</button></td>`;
+
+        // Name
+        const tdName = document.createElement("td");
+        tdName.textContent = name;
+
+        // Dropdown
+        const tdStatus = document.createElement("td");
+        const select = document.createElement("select");
+        select.innerHTML = `
+          <option value="Present">Present</option>
+          <option value="Absent">Absent</option>
+          <option value="Paal">Paal</option>`;
+        select.classList.add("status-dropdown");
+        select.setAttribute("data-index", index);
+        select.onchange = handlePaalSelection;
+
+        tdStatus.appendChild(select);
+
+        // Bheti input
+        const tdAmount = document.createElement("td");
+        const input = document.createElement("input");
+        input.type = "number";
+        input.placeholder = "₹";
+        input.style.width = "60px";
+        tdAmount.appendChild(input);
+
+        tr.appendChild(tdName);
+        tr.appendChild(tdStatus);
+        tr.appendChild(tdAmount);
         tbody.appendChild(tr);
       });
+    }
+
+    function handlePaalSelection(e) {
+      const selected = e.target;
+      if (selected.value === "Paal") {
+        document.querySelectorAll(".status-dropdown").forEach(drop => {
+          if (drop !== selected && drop.value === "Paal") {
+            drop.value = "Present"; // reset others
+          }
+        });
+      }
     }
 
     function capitalize(str) {
@@ -166,5 +218,6 @@
       loadPage(page);
     });
   </script>
+
 </body>
 </html>
