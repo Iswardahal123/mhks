@@ -1,19 +1,70 @@
-<div>
-  <h2 style="text-align: center; margin-bottom: 10px;">Dashboard</h2>
-  <div style="overflow-x: auto;">
-    <table style="width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden;">
-      <thead style="background: #000; color: #fff;">
+<div class="dashboard-container">
+  <h2 style="text-align:center; margin-top: 0;">Dashboard</h2>
+  <div class="table-container">
+    <table class="dashboard-table">
+      <thead>
         <tr>
-          <th style="padding: 12px; text-align: left;">Name</th>
-          <th style="padding: 12px; text-align: left;">Action</th>
+          <th>Name</th>
+          <th>Action</th>
         </tr>
       </thead>
-      <tbody id="name-table">
-        <tr><td colspan="2" style="text-align:center; padding: 10px;">Loading...</td></tr>
+      <tbody id="memberTableBody">
+        <!-- Firebase data will load here -->
       </tbody>
     </table>
   </div>
 </div>
+
+<style>
+  .dashboard-container {
+    padding: 10px;
+  }
+
+  .table-container {
+    max-height: calc(100vh - 160px); /* Adjust based on your header + nav height */
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  .dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .dashboard-table thead {
+    position: sticky;
+    top: 0;
+    background-color: #000;
+    color: white;
+    z-index: 1;
+  }
+
+  .dashboard-table th, .dashboard-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .dashboard-table tr:hover {
+    background-color: #f1f1f1;
+  }
+
+  .dashboard-table button {
+    padding: 6px 12px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .dashboard-table button:hover {
+    background-color: #0056b3;
+  }
+</style>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -32,37 +83,36 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  async function loadDashboardData() {
-    const tableBody = document.getElementById("name-table");
-    tableBody.innerHTML = "<tr><td colspan='2'>Loading...</td></tr>";
+  async function loadMembers() {
+    const memberTableBody = document.getElementById("memberTableBody");
+    memberTableBody.innerHTML = "<tr><td colspan='2'>Loading...</td></tr>";
 
     try {
       const querySnapshot = await getDocs(collection(db, "palsur"));
-      if (querySnapshot.empty) {
-        tableBody.innerHTML = "<tr><td colspan='2'>No data found</td></tr>";
-        return;
-      }
-
-      tableBody.innerHTML = ""; // Clear old content
+      memberTableBody.innerHTML = "";
 
       querySnapshot.forEach((doc) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td style="padding: 10px; border-bottom: 1px solid #ddd;">${doc.id}</td>
-          <td style="padding: 10px; border-bottom: 1px solid #ddd;">
-            <button style="padding: 5px 10px; border: none; background: #007bff; color: white; border-radius: 4px;">View</button>
-          </td>
+        const row = `
+          <tr>
+            <td>${doc.id}</td>
+            <td><button>View</button></td>
+          </tr>
         `;
-        tableBody.appendChild(row);
+        memberTableBody.innerHTML += row;
       });
+
+      // Add extra hidden row so last row is not covered by bottom nav
+      memberTableBody.innerHTML += `
+        <tr style="opacity:0; pointer-events: none;">
+          <td>Padding Row</td><td></td>
+        </tr>
+      `;
     } catch (error) {
-      console.error("Error loading data:", error);
-      tableBody.innerHTML = `<tr><td colspan='2' style="color:red;">Error loading data</td></tr>`;
+      memberTableBody.innerHTML = `<tr><td colspan='2'>Error loading data</td></tr>`;
+      console.error("Error fetching members:", error);
     }
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    loadDashboardData();
-  });
+  // Call on load
+  loadMembers();
 </script>
-
