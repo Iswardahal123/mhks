@@ -1,21 +1,20 @@
 <div>
-  <h2>Dashboard</h2>
+  <h2 style="text-align: center; margin-bottom: 10px;">Dashboard</h2>
   <div style="overflow-x: auto;">
-    <table>
-      <thead>
+    <table style="width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden;">
+      <thead style="background: #000; color: #fff;">
         <tr>
-          <th>Name</th>
-          <th>Action</th>
+          <th style="padding: 12px; text-align: left;">Name</th>
+          <th style="padding: 12px; text-align: left;">Action</th>
         </tr>
       </thead>
       <tbody id="name-table">
-        <!-- Data will load here -->
+        <tr><td colspan="2" style="text-align:center; padding: 10px;">Loading...</td></tr>
       </tbody>
     </table>
   </div>
 </div>
 
-<!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -39,30 +38,31 @@
 
     try {
       const querySnapshot = await getDocs(collection(db, "palsur"));
-      tableBody.innerHTML = ""; // Clear loading
-
       if (querySnapshot.empty) {
         tableBody.innerHTML = "<tr><td colspan='2'>No data found</td></tr>";
         return;
       }
 
+      tableBody.innerHTML = ""; // Clear old content
+
       querySnapshot.forEach((doc) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td>${doc.id}</td>
-          <td><button style="padding:5px 10px;">View</button></td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd;">${doc.id}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+            <button style="padding: 5px 10px; border: none; background: #007bff; color: white; border-radius: 4px;">View</button>
+          </td>
         `;
         tableBody.appendChild(row);
       });
-
     } catch (error) {
-      tableBody.innerHTML = `<tr><td colspan='2' style="color:red;">Error loading data</td></tr>`;
       console.error("Error loading data:", error);
+      tableBody.innerHTML = `<tr><td colspan='2' style="color:red;">Error loading data</td></tr>`;
     }
   }
 
-  // Only run if this script was loaded via SPA
-  window.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", () => {
     loadDashboardData();
   });
 </script>
+
