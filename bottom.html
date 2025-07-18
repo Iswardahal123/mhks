@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bottom Navigation Example</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      padding-bottom: 70px; /* Make space for bottom nav */
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f4;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: #fff;
+      border-top: 1px solid #ddd;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .bottom-nav a {
+      flex-grow: 1;
+      text-align: center;
+      text-decoration: none;
+      color: #555;
+      font-size: 12px;
+      padding-top: 5px;
+      transition: all 0.3s ease;
+    }
+
+    .bottom-nav a.active {
+      color: #007bff;
+    }
+
+    .bottom-nav svg {
+      display: block;
+      margin: 0 auto 3px;
+      fill: currentColor;
+    }
+
+    .content {
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .bottom-nav a:hover {
+      color: #007bff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="content">
+    <h2>Welcome</h2>
+    <p>This is a sample page with bottom navigation.</p>
+  </div>
+
+  <!-- ✅ Bottom Navigation Bar -->
+  <nav class="bottom-nav">
+    <a href="#attendance" id="nav-attendance">
+      <svg width="24" height="24" viewBox="0 0 24 24"><path d="M4 4h16v2H4V4zm0 5h16v2H4V9zm0 5h10v2H4v-2z"/></svg>
+      <span>Attendance</span>
+    </a>
+    <a href="#totals" id="nav-totals">
+      <svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 17h18v2H3v-2zm0-5h12v2H3v-2zm0-5h6v2H3V7z"/></svg>
+      <span>Totals</span>
+    </a>
+    <a href="#dashboard" id="nav-dashboard" class="active">
+      <svg width="24" height="24" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>Dashboard</span>
+    </a>
+    <a href="#collection" id="nav-collection">
+      <svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 4h18v2H3zm0 5h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+      <span>Collection</span>
+    </a>
+    <a href="#members" id="nav-members">
+      <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 12c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4zm0-2a4 4 0 100-8 4 4 0 000 8z"/></svg>
+      <span>Members</span>
+    </a>
+  </nav>
+
+</body>
+</html>
