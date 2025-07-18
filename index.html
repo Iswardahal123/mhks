@@ -3,21 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Modern Web App</title>
+  <title>Iswar App</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: #f9f9f9;
-      padding-bottom: 70px; /* leave space for nav */
+      background: #f5f5f5;
+      padding-bottom: 70px; /* Space for bottom nav */
     }
 
     #app {
-      padding: 20px;
+      padding: 15px;
     }
 
-    /* Bottom Navigation */
+    /* Bottom Navigation Styles */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -28,27 +32,27 @@
       display: flex;
       justify-content: space-around;
       align-items: center;
-      border-top: 1px solid #ddd;
-      box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
-      z-index: 999;
+      border-top: 1px solid #ccc;
+      box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.05);
+      z-index: 1000;
     }
 
     .bottom-nav a {
       flex: 1;
       text-align: center;
-      color: #555;
-      font-size: 11px;
       text-decoration: none;
+      color: #666;
+      font-size: 11px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      transition: color 0.2s;
+      transition: color 0.2s ease-in-out;
     }
 
     .bottom-nav a i {
       font-size: 18px;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
 
     .bottom-nav a.active {
@@ -59,19 +63,19 @@
       color: #007bff;
     }
 
-    /* Responsive content padding */
+    /* Mobile Responsive */
     @media (max-width: 600px) {
       #app {
-        padding: 15px;
+        padding: 12px;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Main content -->
+  <!-- Dynamic Content -->
   <div id="app">
-    <!-- Dynamic content will be loaded here -->
+    <!-- Pages will be loaded here -->
   </div>
 
   <!-- Bottom Navigation -->
@@ -84,7 +88,6 @@
   </nav>
 
   <script>
-    const app = document.getElementById('app');
     const routes = {
       dashboard: 'pages/dashboard.html',
       attendance: 'pages/attendance.html',
@@ -93,44 +96,64 @@
       members: 'pages/members.html'
     };
 
-   async function loadPage(page) {
-  try {
-    const res = await fetch(`pages/${page}.html`);
-    if (!res.ok) throw new Error("Page not found");
-    const content = await res.text();
-    document.getElementById('app').innerHTML = content;
+    const app = document.getElementById('app');
 
-    if (page === 'dashboard') {
-      loadDashboardMembers(); // <--- NEW
+    // Load page into #app
+    async function loadPage(page) {
+      try {
+        const res = await fetch(routes[page]);
+        if (!res.ok) throw new Error("Page not found");
+        const html = await res.text();
+        app.innerHTML = html;
+
+        if (page === 'dashboard') loadDashboardMembers();
+      } catch (err) {
+        app.innerHTML = "<h3>Page not found.</h3>";
+      }
     }
 
-  } catch (e) {
-    document.getElementById('app').innerHTML = "<h3>Page not found.</h3>";
-  }
-}
-function loadDashboardMembers() {
-  const names = [
-    'Bikash Sitola','Durga Sharmah', 'Purna Chapagain', 'Raju Bajgain', 'Krishna Bajgain', 'Baburam Ram Poudel',
-    'Tanka Boral', 'Churamoni Ojha', 'Bikash Koirala', 'Dipak Koirala', 'Bhuban Sharmah',
-    'Tilaram Boral', 'Shyam Gurung', 'Binod Porajuli', 'Bhuban Sapkota', 'Surja Poudel',
-    'Khemraj Poudel', 'Prem Poudel', 'Rupnarayan Sitola', 'Keshab gajurel', 'Kishore Dahal',
-    'Khemraj Rijal', 'Sagar Sapkota', 'Lila Timsina', 'Ganesh Karki', 'Man Br Rai',
-    'Man Br Subba', 'Ganesh Dhungana', 'Hari Singh Mohora', 'Ram br basnet', 'Debi Prashad Dhakal',
-    'Sekhar Sharmah', 'Ramlal Dhakal', 'Durga timsina'
-  ];
+    // Load members into dashboard
+    function loadDashboardMembers() {
+      const names = [
+        'Bikash Sitola','Durga Sharmah','Purna Chapagain','Raju Bajgain','Krishna Bajgain',
+        'Baburam Ram Poudel','Tanka Boral','Churamoni Ojha','Bikash Koirala','Dipak Koirala',
+        'Bhuban Sharmah','Tilaram Boral','Shyam Gurung','Binod Porajuli','Bhuban Sapkota',
+        'Surja Poudel','Khemraj Poudel','Prem Poudel','Rupnarayan Sitola','Keshab gajurel',
+        'Kishore Dahal','Khemraj Rijal','Sagar Sapkota','Lila Timsina','Ganesh Karki',
+        'Man Br Rai','Man Br Subba','Ganesh Dhungana','Hari Singh Mohora','Ram br basnet',
+        'Debi Prashad Dhakal','Sekhar Sharmah','Ramlal Dhakal','Durga timsina'
+      ];
 
-  const tableBody = document.getElementById('member-table-body');
-  if (!tableBody) return;
+      const tableBody = document.getElementById('member-table-body');
+      if (!tableBody) return;
 
-  tableBody.innerHTML = names.map((name, index) => `
-    <tr>
-      <td>${index + 1}</td>
-      <td>${name}</td>
-      <td><button class="view-btn">View</button></td>
-    </tr>
-  `).join('');
-}
+      tableBody.innerHTML = names.map((name, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${name}</td>
+          <td><button class="view-btn">View</button></td>
+        </tr>
+      `).join('');
+    }
 
+    // Routing setup
+    function handleHashChange() {
+      const page = location.hash.replace("#", "") || "dashboard";
+      loadPage(page);
+      updateActiveNav(page);
+    }
+
+    function updateActiveNav(page) {
+      document.querySelectorAll(".bottom-nav a").forEach(link => {
+        link.classList.remove("active");
+      });
+      const active = document.querySelector(`#nav-${page}`);
+      if (active) active.classList.add("active");
+    }
+
+    // Init
+    window.addEventListener("hashchange", handleHashChange);
+    handleHashChange(); // on load
   </script>
 
 </body>
