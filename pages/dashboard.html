@@ -1,49 +1,76 @@
 <div style="padding: 10px;">
   <h2>Dashboard</h2>
-
+  <div id="loading">Loading names...</div>
   <div style="overflow-x: auto;">
-    <table style="width: 100%; border-collapse: collapse;">
+    <table id="membersTable" style="width: 100%; border-collapse: collapse; display: none;">
       <thead>
-        <tr style="background: #333; color: white;">
+        <tr style="background-color: #000; color: white;">
           <th style="padding: 10px;">Name</th>
           <th style="padding: 10px;">Action</th>
         </tr>
       </thead>
-      <tbody id="dashboard-table-body"></tbody>
+      <tbody></tbody>
     </table>
   </div>
 </div>
 
-<!-- Bottom Navigation will be loaded dynamically -->
-<div id="bottom-nav-container"></div>
+<div id="bottomNavContainer"></div>
 
-<script>
-  const names = [
-    'Bikash Sitola','Durga Sharmah', 'Purna Chapagain', 'Raju Bajgain', 'Krishna Bajgain', 'Baburam Ram Poudel',
-    'Tanka Boral', 'Churamoni Ojha', 'Bikash Koirala', 'Dipak Koirala', 'Bhuban Sharmah',
-    'Tilaram Boral', 'Shyam Gurung', 'Binod Porajuli', 'Bhuban Sapkota', 'Surja Poudel',
-    'Khemraj Poudel', 'Prem Poudel', 'Rupnarayan Sitola', 'Keshab gajurel', 'Kishore Dahal',
-    'Khemraj Rijal', 'Sagar Sapkota', 'Lila Timsina', 'Ganesh Karki', 'Man Br Rai',
-    'Man Br Subba', 'Ganesh Dhungana', 'Hari Singh Mohora', 'Ram br basnet', 'Debi Prashad Dhakal',
-    'Sekhar Sharmah', 'Ramlal Dhakal', 'Durga timsina'
-  ];
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  const tbody = document.getElementById("dashboard-table-body");
-  names.forEach(name => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td style="padding: 10px;">${name}</td>
-      <td style="padding: 10px;">
-        <button style="padding: 6px 12px; background-color: #4CAF50; color: white; border: none; border-radius: 4px;">View</button>
-      </td>
-    `;
-    tbody.appendChild(row);
-  });
+  const firebaseConfig = {
+    apiKey: "AIzaSyCyibssZJsYwzI_2VXwC98iUGix2IkFczM",
+    authDomain: "iswar-121d6.firebaseapp.com",
+    projectId: "iswar-121d6",
+    storageBucket: "iswar-121d6.appspot.com",
+    messagingSenderId: "696246777134",
+    appId: "1:696246777134:web:065951d401a56d8c7d76bf",
+    measurementId: "G-HG807RGEGJ"
+  };
 
-  // Load bottom nav
-  fetch("components/bottomnav.html")
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  async function loadUsers() {
+    const table = document.getElementById("membersTable");
+    const tbody = table.querySelector("tbody");
+    const loading = document.getElementById("loading");
+
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      if (querySnapshot.empty) {
+        loading.innerText = "No users found.";
+        return;
+      }
+
+      querySnapshot.forEach(doc => {
+        const name = doc.id;
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td style="padding: 8px;">${name}</td>
+          <td style="padding: 8px;">
+            <button style="padding: 5px 10px; background: blue; color: white; border: none;">View</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      loading.style.display = "none";
+      table.style.display = "table";
+    } catch (error) {
+      loading.innerText = "Failed to load users.";
+      console.error(error);
+    }
+  }
+
+  loadUsers();
+
+  // Include bottom nav
+  fetch('bottomnav.html')
     .then(res => res.text())
     .then(html => {
-      document.getElementById("bottom-nav-container").innerHTML = html;
+      document.getElementById("bottomNavContainer").innerHTML = html;
     });
 </script>
