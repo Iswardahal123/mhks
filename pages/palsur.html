@@ -1,0 +1,120 @@
+<div style="padding: 10px;">
+  <h2>Palsur Attendance</h2>
+  <div style="overflow-x: auto;">
+    <table id="attendanceTable" style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="background: #000; color: #fff;">
+          <th style="padding: 10px;">Name</th>
+          <th>Type</th>
+          <th>Bheti</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div style="margin-top: 15px;">
+    <label><b>Total Amount:</b></label>
+    <input type="number" id="totalAmount" style="width: 100%; padding: 8px; margin-top: 5px;" />
+  </div>
+
+  <button onclick="submitPalsurAttendance()" style="margin-top: 15px; width: 100%; padding: 10px; background: green; color: white; font-weight: bold;">
+    Submit
+  </button>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCyibssZJsYwzI_2VXwC98iUGix2IkFczM",
+    authDomain: "iswar-121d6.firebaseapp.com",
+    projectId: "iswar-121d6",
+    storageBucket: "iswar-121d6.appspot.com",
+    messagingSenderId: "696246777134",
+    appId: "1:696246777134:web:065951d401a56d8c7d76bf",
+    measurementId: "G-HG807RGEGJ"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const names = [
+    "Anita", "Biki", "Bhaskar", "Dhrubajyoti", "Dipak", "Dilip", "Gajendra", "Gokul", "Gopal", "Haren",
+    "Jitu", "Kaushik", "Kiran", "Lakhindra", "Milan", "Mintu", "Nayan", "Parag", "Pritam", "Rakesh",
+    "Rana", "Ranjit", "Ratul", "Rintu", "Rohit", "Rupak", "Samiran", "Sandeep", "Subham", "Tapan",
+    "Tarun", "Uttam", "Vikash", "Vinod"
+  ];
+
+  const tbody = document.querySelector("#attendanceTable tbody");
+
+  let selectedPaal = null;
+
+  names.forEach((name, index) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td style="padding: 8px;">${name}</td>
+      <td>
+        <select class="type-select" data-index="${index}" style="padding: 5px;">
+          <option value="Present">Present</option>
+          <option value="Absent">Absent</option>
+          <option value="Paal">Paal</option>
+        </select>
+      </td>
+      <td>
+        <input type="number" class="bheti-input" disabled style="padding: 5px; width: 100%;" />
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
+
+  document.querySelectorAll(".type-select").forEach(select => {
+    select.addEventListener("change", function () {
+      document.querySelectorAll(".bheti-input").forEach(input => input.disabled = true);
+      document.querySelectorAll(".type-select").forEach(sel => {
+        if (sel !== this && sel.value === "Paal") sel.value = "Present";
+      });
+
+      const index = parseInt(this.dataset.index);
+      const input = tbody.rows[index].querySelector(".bheti-input");
+
+      if (this.value === "Paal") {
+        selectedPaal = names[index];
+        input.disabled = false;
+      } else {
+        if (selectedPaal === names[index]) selectedPaal = null;
+        input.disabled = true;
+      }
+    });
+  });
+
+  window.submitPalsurAttendance = async function () {
+    if (!selectedPaal) {
+      alert("Please select one person as Paal");
+      return;
+    }
+
+    const totalAmount = document.getElementById("totalAmount").value || 0;
+    const data = {
+      timestamp: new Date(),
+      totalAmount: parseInt(totalAmount),
+      attendance: {},
+    };
+
+    names.forEach((name, index) => {
+      const type = tbody.rows[index].querySelector(".type-select").value;
+      const bhetiInput = tbody.rows[index].querySelector(".bheti-input");
+      const bheti = type === "Paal" ? parseInt(bhetiInput.value) || 0 : 0;
+      data.attendance[name] = { type, bheti };
+    });
+
+    try {
+      await setDoc(doc(db, "palsur", selectedPaal), data);
+      alert("Attendance submitted!");
+    } catch (error) {
+      console.error("Error writing document: ", error);
+      alert("Error saving data.");
+    }
+  };
+</script>
