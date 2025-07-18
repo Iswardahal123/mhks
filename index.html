@@ -2,62 +2,85 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>My Web App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modern Web App</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: #f0f0f0;
-      padding-bottom: 60px;
+      background: #f9f9f9;
+      padding-bottom: 70px; /* leave space for nav */
     }
 
     #app {
-      padding: 10px;
+      padding: 20px;
     }
 
-    /* Bottom Nav */
+    /* Bottom Navigation */
     .bottom-nav {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
       height: 60px;
-      background: white;
+      background-color: #ffffff;
       display: flex;
       justify-content: space-around;
       align-items: center;
-      border-top: 1px solid #ccc;
+      border-top: 1px solid #ddd;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
       z-index: 999;
     }
 
     .bottom-nav a {
       flex: 1;
       text-align: center;
-      font-size: 12px;
+      color: #555;
+      font-size: 11px;
       text-decoration: none;
-      color: #666;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    }
+
+    .bottom-nav a i {
+      font-size: 18px;
+      margin-bottom: 3px;
     }
 
     .bottom-nav a.active {
       color: #007bff;
-      font-weight: bold;
+    }
+
+    .bottom-nav a:hover {
+      color: #007bff;
+    }
+
+    /* Responsive content padding */
+    @media (max-width: 600px) {
+      #app {
+        padding: 15px;
+      }
     }
   </style>
 </head>
 <body>
 
+  <!-- Main content -->
   <div id="app">
-    <!-- Content will load here -->
+    <!-- Dynamic content will be loaded here -->
   </div>
 
-  <!-- ✅ Bottom Nav -->
+  <!-- Bottom Navigation -->
   <nav class="bottom-nav">
-    <a href="#dashboard" id="nav-dashboard">Dashboard</a>
-    <a href="#attendance" id="nav-attendance">Attendance</a>
-    <a href="#totals" id="nav-totals">Totals</a>
-    <a href="#collection" id="nav-collection">Collection</a>
-    <a href="#members" id="nav-members">Members</a>
+    <a href="#dashboard" id="nav-dashboard"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+    <a href="#attendance" id="nav-attendance"><i class="fa-solid fa-clipboard-check"></i><span>Attendance</span></a>
+    <a href="#totals" id="nav-totals"><i class="fa-solid fa-sack-dollar"></i><span>Totals</span></a>
+    <a href="#collection" id="nav-collection"><i class="fa-solid fa-box"></i><span>Collection</span></a>
+    <a href="#members" id="nav-members"><i class="fa-solid fa-users"></i><span>Members</span></a>
   </nav>
 
   <script>
@@ -81,7 +104,7 @@
         .then(res => res.text())
         .then(html => {
           app.innerHTML = html;
-          updateNavActive(page);
+          updateActiveNav(page);
         })
         .catch(err => {
           app.innerHTML = '<h2>Error loading page</h2>';
@@ -89,23 +112,22 @@
         });
     }
 
-    function updateNavActive(currentPage) {
+    function updateActiveNav(current) {
       document.querySelectorAll('.bottom-nav a').forEach(link => {
         link.classList.remove('active');
-        if (link.getAttribute('href') === `#${currentPage}`) {
+        if (link.getAttribute('href') === `#${current}`) {
           link.classList.add('active');
         }
       });
     }
 
-    window.addEventListener('hashchange', () => {
+    function handleRouting() {
       const page = location.hash.replace('#', '') || 'dashboard';
       loadPage(page);
-    });
+    }
 
-    // Initial load
-    const initialPage = location.hash.replace('#', '') || 'dashboard';
-    loadPage(initialPage);
+    window.addEventListener('hashchange', handleRouting);
+    window.addEventListener('load', handleRouting);
   </script>
 
 </body>
