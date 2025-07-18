@@ -1,76 +1,156 @@
-<div style="padding: 10px;">
-  <h2>Dashboard</h2>
-  <div id="loading">Loading names...</div>
-  <div style="overflow-x: auto;">
-    <table id="membersTable" style="width: 100%; border-collapse: collapse; display: none;">
-      <thead>
-        <tr style="background-color: #000; color: white;">
-          <th style="padding: 10px;">Name</th>
-          <th style="padding: 10px;">Action</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-</div>
-
-<div id="bottomNavContainer"></div>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCyibssZJsYwzI_2VXwC98iUGix2IkFczM",
-    authDomain: "iswar-121d6.firebaseapp.com",
-    projectId: "iswar-121d6",
-    storageBucket: "iswar-121d6.appspot.com",
-    messagingSenderId: "696246777134",
-    appId: "1:696246777134:web:065951d401a56d8c7d76bf",
-    measurementId: "G-HG807RGEGJ"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  async function loadUsers() {
-    const table = document.getElementById("membersTable");
-    const tbody = table.querySelector("tbody");
-    const loading = document.getElementById("loading");
-
-    try {
-      const querySnapshot = await getDocs(collection(db, "users"));
-      if (querySnapshot.empty) {
-        loading.innerText = "No users found.";
-        return;
-      }
-
-      querySnapshot.forEach(doc => {
-        const name = doc.id;
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td style="padding: 8px;">${name}</td>
-          <td style="padding: 8px;">
-            <button style="padding: 5px 10px; background: blue; color: white; border: none;">View</button>
-          </td>
-        `;
-        tbody.appendChild(row);
-      });
-
-      loading.style.display = "none";
-      table.style.display = "table";
-    } catch (error) {
-      loading.innerText = "Failed to load users.";
-      console.error(error);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
     }
-  }
 
-  loadUsers();
+    #app {
+      padding: 10px;
+      padding-bottom: 70px; /* to prevent bottom nav overlap */
+    }
 
-  // Include bottom nav
-  fetch('bottomnav.html')
-    .then(res => res.text())
-    .then(html => {
-      document.getElementById("bottomNavContainer").innerHTML = html;
-    });
-</script>
+    h2 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border: 1px solid #ddd;
+    }
+
+    thead {
+      background-color: #333;
+      color: white;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    button.view-btn {
+      padding: 6px 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button.view-btn:hover {
+      background-color: #0056b3;
+    }
+
+    #bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background-color: #111;
+      color: white;
+      border-top: 1px solid #444;
+    }
+
+    #bottom-nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    #bottom-nav a.active {
+      font-weight: bold;
+      color: #00ffff;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h2>Dashboard</h2>
+    <div style="overflow-x: auto;">
+      <table id="userTable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="2">Loading names...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <div id="bottom-nav">
+    <a href="#dashboard" class="active">Dashboard</a>
+    <a href="#attendance">Attendance</a>
+    <a href="#totals">Totals</a>
+    <a href="#collection">Collection</a>
+    <a href="#members">Members</a>
+  </div>
+
+  <!-- Firebase and Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCyibssZJsYwzI_2VXwC98iUGix2IkFczM",
+      authDomain: "iswar-121d6.firebaseapp.com",
+      projectId: "iswar-121d6",
+      storageBucket: "iswar-121d6.appspot.com",
+      messagingSenderId: "696246777134",
+      appId: "1:696246777134:web:065951d401a56d8c7d76bf",
+      measurementId: "G-HG807RGEGJ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const tbody = document.querySelector("#userTable tbody");
+
+    async function loadNames() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "users"));
+        tbody.innerHTML = ""; // Clear loading row
+
+        if (querySnapshot.empty) {
+          tbody.innerHTML = "<tr><td colspan='2'>No users found.</td></tr>";
+          return;
+        }
+
+        querySnapshot.forEach((doc) => {
+          const name = doc.data().name;
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${name}</td>
+            <td><button class="view-btn">View</button></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        tbody.innerHTML = "<tr><td colspan='2'>Failed to load users.</td></tr>";
+      }
+    }
+
+    loadNames();
+  </script>
+</body>
+</html>
