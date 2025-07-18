@@ -1,88 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Dashboard</title>
-  <style>
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .table-wrapper {
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      padding: 10px;
-      overflow-y: auto;
-      max-height: 75vh;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-
-    th, td {
-      padding: 10px;
-      border-bottom: 1px solid #ccc;
-      text-align: left;
-    }
-
-    th {
-      background-color: #f2f2f2;
-    }
-
-    button {
-      padding: 6px 12px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #0056b3;
-    }
-  </style>
-</head>
-<body>
-
+<div>
   <h2>Dashboard</h2>
-  <div class="table-wrapper">
+  <div style="overflow-x: auto;">
     <table>
       <thead>
-        <tr><th>Name</th><th>Action</th></tr>
+        <tr>
+          <th>Name</th>
+          <th>Action</th>
+        </tr>
       </thead>
-      <tbody id="member-table"></tbody>
+      <tbody id="name-table">
+        <!-- Data will load here -->
+      </tbody>
     </table>
   </div>
+</div>
 
-  <script>
-    const fallbackNames = [
-      'Bikash Sitola','Durga Sharmah','Purna Chapagain','Raju Bajgain','Krishna Bajgain','Baburam Ram Poudel',
-      'Tanka Boral','Churamoni Ojha','Bikash Koirala','Dipak Koirala','Bhuban Sharmah','Tilaram Boral','Shyam Gurung',
-      'Binod Porajuli','Bhuban Sapkota','Surja Poudel','Khemraj Poudel','Prem Poudel','Rupnarayan Sitola',
-      'Keshab Gajurel','Kishore Dahal','Khemraj Rijal','Sagar Sapkota','Lila Timsina','Ganesh Karki',
-      'Man Br Rai','Man Br Subba','Ganesh Dhungana','Hari Singh Mohora','Ram Br Basnet','Debi Prashad Dhakal',
-      'Sekhar Sharmah','Ramlal Dhakal','Durga Timsina','Mahadev'
-    ];
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    function addRow(tbody, name) {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${name}</td>
-        <td><button onclick="alert('Viewing ${name}')">View</button></td>
-      `;
-      tbody.appendChild(row);
+  const firebaseConfig = {
+    apiKey: "AIzaSyCyibssZJsYwzI_2VXwC98iUGix2IkFczM",
+    authDomain: "iswar-121d6.firebaseapp.com",
+    projectId: "iswar-121d6",
+    storageBucket: "iswar-121d6.appspot.com",
+    messagingSenderId: "696246777134",
+    appId: "1:696246777134:web:065951d401a56d8c7d76bf",
+    measurementId: "G-HG807RGEGJ"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  async function loadDashboardData() {
+    const tableBody = document.getElementById("name-table");
+    tableBody.innerHTML = "<tr><td colspan='2'>Loading...</td></tr>";
+
+    try {
+      const querySnapshot = await getDocs(collection(db, "palsur"));
+      tableBody.innerHTML = ""; // Clear loading
+
+      if (querySnapshot.empty) {
+        tableBody.innerHTML = "<tr><td colspan='2'>No data found</td></tr>";
+        return;
+      }
+
+      querySnapshot.forEach((doc) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${doc.id}</td>
+          <td><button style="padding:5px 10px;">View</button></td>
+        `;
+        tableBody.appendChild(row);
+      });
+
+    } catch (error) {
+      tableBody.innerHTML = `<tr><td colspan='2' style="color:red;">Error loading data</td></tr>`;
+      console.error("Error loading data:", error);
     }
+  }
 
-    window.addEventListener("DOMContentLoaded", () => {
-      const tbody = document.getElementById("member-table");
-      fallbackNames.forEach(name => addRow(tbody, name));
-    });
-  </script>
-</body>
-</html>
+  // Only run if this script was loaded via SPA
+  window.addEventListener("DOMContentLoaded", () => {
+    loadDashboardData();
+  });
+</script>
