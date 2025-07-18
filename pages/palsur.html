@@ -41,80 +41,85 @@
   const db = getFirestore(app);
 
   const names = [
-    "Anita", "Biki", "Bhaskar", "Dhrubajyoti", "Dipak", "Dilip", "Gajendra", "Gokul", "Gopal", "Haren",
-    "Jitu", "Kaushik", "Kiran", "Lakhindra", "Milan", "Mintu", "Nayan", "Parag", "Pritam", "Rakesh",
-    "Rana", "Ranjit", "Ratul", "Rintu", "Rohit", "Rupak", "Samiran", "Sandeep", "Subham", "Tapan",
-    "Tarun", "Uttam", "Vikash", "Vinod"
+    "Bikash Sitola", "Durga Sharmah", "Purna Chapagain", "Raju Bajgain", "Krishna Bajgain",
+    "Baburam Ram Poudel", "Tanka Boral", "Churamoni Ojha", "Bikash Koirala", "Dipak Koirala",
+    "Bhuban Sharmah", "Tilaram Boral", "Shyam Gurung", "Binod Porajuli", "Bhuban Sapkota",
+    "Surja Poudel", "Khemraj Poudel", "Prem Poudel", "Rupnarayan Sitola", "Keshab Gajurel",
+    "Kishore Dahal", "Khemraj Rijal", "Sagar Sapkota", "Lila Timsina", "Ganesh Karki",
+    "Man Br Rai", "Man Br Subba", "Ganesh Dhungana", "Hari Singh Mohora", "Ram br Basnet",
+    "Debi Prashad Dhakal", "Sekhar Sharmah", "Ramlal Dhakal", "Durga Timsina"
   ];
 
-  const tbody = document.querySelector("#attendanceTable tbody");
+  window.initAttendancePage = () => {
+    const tbody = document.querySelector("#attendanceTable tbody");
+    let selectedPaal = null;
 
-  let selectedPaal = null;
+    tbody.innerHTML = "";
+    names.forEach((name, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td style="padding: 8px;">${name}</td>
+        <td>
+          <select class="type-select" data-index="${index}" style="padding: 5px;">
+            <option value="Present">Present</option>
+            <option value="Absent">Absent</option>
+            <option value="Paal">Paal</option>
+          </select>
+        </td>
+        <td>
+          <input type="number" class="bheti-input" disabled style="padding: 5px; width: 100%;" />
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
 
-  names.forEach((name, index) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td style="padding: 8px;">${name}</td>
-      <td>
-        <select class="type-select" data-index="${index}" style="padding: 5px;">
-          <option value="Present">Present</option>
-          <option value="Absent">Absent</option>
-          <option value="Paal">Paal</option>
-        </select>
-      </td>
-      <td>
-        <input type="number" class="bheti-input" disabled style="padding: 5px; width: 100%;" />
-      </td>
-    `;
-    tbody.appendChild(row);
-  });
+    document.querySelectorAll(".type-select").forEach(select => {
+      select.addEventListener("change", function () {
+        document.querySelectorAll(".bheti-input").forEach(input => input.disabled = true);
+        document.querySelectorAll(".type-select").forEach(sel => {
+          if (sel !== this && sel.value === "Paal") sel.value = "Present";
+        });
 
-  document.querySelectorAll(".type-select").forEach(select => {
-    select.addEventListener("change", function () {
-      document.querySelectorAll(".bheti-input").forEach(input => input.disabled = true);
-      document.querySelectorAll(".type-select").forEach(sel => {
-        if (sel !== this && sel.value === "Paal") sel.value = "Present";
+        const index = parseInt(this.dataset.index);
+        const input = tbody.rows[index].querySelector(".bheti-input");
+
+        if (this.value === "Paal") {
+          selectedPaal = names[index];
+          input.disabled = false;
+        } else {
+          if (selectedPaal === names[index]) selectedPaal = null;
+          input.disabled = true;
+        }
+      });
+    });
+
+    window.submitPalsurAttendance = async function () {
+      if (!selectedPaal) {
+        alert("Please select one person as Paal");
+        return;
+      }
+
+      const totalAmount = document.getElementById("totalAmount").value || 0;
+      const data = {
+        timestamp: new Date(),
+        totalAmount: parseInt(totalAmount),
+        attendance: {},
+      };
+
+      names.forEach((name, index) => {
+        const type = tbody.rows[index].querySelector(".type-select").value;
+        const bhetiInput = tbody.rows[index].querySelector(".bheti-input");
+        const bheti = type === "Paal" ? parseInt(bhetiInput.value) || 0 : 0;
+        data.attendance[name] = { type, bheti };
       });
 
-      const index = parseInt(this.dataset.index);
-      const input = tbody.rows[index].querySelector(".bheti-input");
-
-      if (this.value === "Paal") {
-        selectedPaal = names[index];
-        input.disabled = false;
-      } else {
-        if (selectedPaal === names[index]) selectedPaal = null;
-        input.disabled = true;
+      try {
+        await setDoc(doc(db, "palsur", selectedPaal), data);
+        alert("Attendance submitted!");
+      } catch (error) {
+        console.error("Error writing document: ", error);
+        alert("Error saving data.");
       }
-    });
-  });
-
-  window.submitPalsurAttendance = async function () {
-    if (!selectedPaal) {
-      alert("Please select one person as Paal");
-      return;
-    }
-
-    const totalAmount = document.getElementById("totalAmount").value || 0;
-    const data = {
-      timestamp: new Date(),
-      totalAmount: parseInt(totalAmount),
-      attendance: {},
     };
-
-    names.forEach((name, index) => {
-      const type = tbody.rows[index].querySelector(".type-select").value;
-      const bhetiInput = tbody.rows[index].querySelector(".bheti-input");
-      const bheti = type === "Paal" ? parseInt(bhetiInput.value) || 0 : 0;
-      data.attendance[name] = { type, bheti };
-    });
-
-    try {
-      await setDoc(doc(db, "palsur", selectedPaal), data);
-      alert("Attendance submitted!");
-    } catch (error) {
-      console.error("Error writing document: ", error);
-      alert("Error saving data.");
-    }
   };
 </script>
