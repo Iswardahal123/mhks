@@ -1,89 +1,101 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Web App</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My App</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #f9f9f9;
-      padding-bottom: 60px;
+      font-family: Arial, sans-serif;
     }
+
     #app {
-      padding: 20px;
+      padding-bottom: 60px;
+      min-height: 100vh;
+      overflow-y: auto;
     }
+
     .bottom-nav {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
       height: 60px;
-      background: #fff;
+      background-color: #ffffff;
       display: flex;
-      justify-content: space-around;
-      border-top: 1px solid #ddd;
-      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
-      z-index: 99;
+      border-top: 1px solid #ccc;
+      box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
     }
-    .bottom-nav a {
+
+    .bottom-nav button {
       flex: 1;
+      border: none;
+      background: none;
+      font-size: 14px;
+      padding: 5px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bottom-nav button.active {
+      color: green;
+      font-weight: bold;
+    }
+
+    .loader {
       text-align: center;
-      font-size: 12px;
-      color: #444;
-      text-decoration: none;
-    }
-    .bottom-nav a i {
-      display: block;
-      font-size: 18px;
-      margin-bottom: 4px;
-    }
-    .bottom-nav a.active {
-      color: #007bff;
+      padding: 20px;
     }
   </style>
 </head>
 <body>
-  <div id="app">Loading...</div>
+  <div id="app">
+    <div class="loader">Loading...</div>
+  </div>
 
-  <nav class="bottom-nav">
-    <a href="#dashboard"><i class="fa-solid fa-house"></i>Dashboard</a>
-    <a href="#attendance"><i class="fa-solid fa-clipboard-check"></i>Attendance</a>
-    <a href="#totals"><i class="fa-solid fa-sack-dollar"></i>Totals</a>
-    <a href="#collection"><i class="fa-solid fa-box"></i>Collection</a>
-    <a href="#members"><i class="fa-solid fa-users"></i>Members</a>
-  </nav>
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <button data-page="dashboard">Dashboard</button>
+    <button data-page="attendance">Attendance</button>
+  </div>
 
-  <script>
-    const routes = {
-      dashboard: "pages/dashboard.html",
-      palsur: "pages/palsur.html",
-      totals: "pages/totals.html",
-      collection: "pages/collection.html",
-      members: "pages/members.html"
-    };
+  <script type="module">
+    const appDiv = document.getElementById("app");
+    const buttons = document.querySelectorAll(".bottom-nav button");
 
-    async function loadPage(hash) {
-      const page = hash.replace("#", "") || "dashboard";
-      const url = routes[page] || "pages/dashboard.html";
-      try {
-        const res = await fetch(url);
-        const html = await res.text();
-        document.getElementById("app").innerHTML = html;
+    function loadPage(page) {
+      buttons.forEach(btn => btn.classList.remove("active"));
+      document.querySelector(`[data-page="${page}"]`)?.classList.add("active");
 
-        // Run any init function
-        if (page === "dashboard" && window.loadDashboardMembers) loadDashboardMembers();
-        if (page === "attendance" && window.initAttendancePage) initAttendancePage(); // 👈 for attendance
-
-      } catch (err) {
-        document.getElementById("app").innerHTML = "<h3>Error loading page</h3>";
-      }
+      fetch(`pages/${page}.html`)
+        .then(res => res.text())
+        .then(html => {
+          appDiv.innerHTML = html;
+        })
+        .catch(() => {
+          appDiv.innerHTML = "<p style='padding:20px;'>Page not found</p>";
+        });
     }
 
-    window.addEventListener("hashchange", () => loadPage(location.hash));
-    window.addEventListener("DOMContentLoaded", () => loadPage(location.hash));
+    buttons.forEach(button => {
+      button.addEventListener("click", () => {
+        const page = button.getAttribute("data-page");
+        location.hash = page;
+      });
+    });
+
+    window.addEventListener("hashchange", () => {
+      const page = location.hash.replace("#", "") || "dashboard";
+      loadPage(page);
+    });
+
+    // Initial page load
+    window.dispatchEvent(new Event("hashchange"));
   </script>
 </body>
 </html>
