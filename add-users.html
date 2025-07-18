@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Seed Users to Firestore</title>
+  <script type="module">
+    // ✅ Import Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // ✅ Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCyibssZJsYwzI_2VXwC98iUGix2IkFczM",
+      authDomain: "iswar-121d6.firebaseapp.com",
+      projectId: "iswar-121d6",
+      storageBucket: "iswar-121d6.appspot.com",
+      messagingSenderId: "696246777134",
+      appId: "1:696246777134:web:065951d401a56d8c7d76bf",
+      measurementId: "G-HG807RGEGJ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // ✅ Fixed name list
+    const names = [
+      'Bikash Sitola','Durga Sharmah', 'Purna Chapagain', 'Raju Bajgain', 'Krishna Bajgain', 'Baburam Ram Poudel',
+      'Tanka Boral', 'Churamoni Ojha', 'Bikash Koirala', 'Dipak Koirala', 'Bhuban Sharmah',
+      'Tilaram Boral', 'Shyam Gurung', 'Binod Porajuli', 'Bhuban Sapkota', 'Surja Poudel',
+      'Khemraj Poudel', 'Prem Poudel', 'Rupnarayan Sitola', 'Keshab gajurel', 'Kishore Dahal',
+      'Khemraj Rijal', 'Sagar Sapkota', 'Lila Timsina', 'Ganesh Karki', 'Man Br Rai',
+      'Man Br Subba', 'Ganesh Dhungana', 'Hari Singh Mohora', 'Ram br basnet', 'Debi Prashad Dhakal',
+      'Sekhar Sharmah', 'Ramlal Dhakal', 'Durga timsina'
+    ];
+
+    async function seedUsers() {
+      for (let name of names) {
+        const docId = name.replace(/\s+/g, '_').toLowerCase(); // eg: "Bikash Sitola" → "bikash_sitola"
+        await setDoc(doc(db, "users", docId), {
+          name: name,
+          createdAt: new Date().toISOString()
+        });
+        console.log(`✅ Added: ${name}`);
+      }
+      alert("✅ All users have been added to Firestore!");
+    }
+
+    seedUsers();
+  </script>
+</head>
+<body>
+  <h2>Seeding users to Firestore...</h2>
+</body>
+</html>
