@@ -3,158 +3,87 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Iswar App</title>
+  <title>Web App</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: #f5f5f5;
-      padding-bottom: 70px; /* Space for bottom nav */
+      background: #f9f9f9;
+      padding-bottom: 60px;
     }
-
     #app {
-      padding: 15px;
+      padding: 20px;
     }
-
-    /* Bottom Navigation Styles */
     .bottom-nav {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
       height: 60px;
-      background-color: #ffffff;
+      background: #fff;
       display: flex;
       justify-content: space-around;
-      align-items: center;
-      border-top: 1px solid #ccc;
-      box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.05);
-      z-index: 1000;
+      border-top: 1px solid #ddd;
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+      z-index: 99;
     }
-
     .bottom-nav a {
       flex: 1;
       text-align: center;
+      font-size: 12px;
+      color: #444;
       text-decoration: none;
-      color: #666;
-      font-size: 11px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: color 0.2s ease-in-out;
     }
-
     .bottom-nav a i {
+      display: block;
       font-size: 18px;
-      margin-bottom: 2px;
+      margin-bottom: 4px;
     }
-
     .bottom-nav a.active {
       color: #007bff;
-    }
-
-    .bottom-nav a:hover {
-      color: #007bff;
-    }
-
-    /* Mobile Responsive */
-    @media (max-width: 600px) {
-      #app {
-        padding: 12px;
-      }
     }
   </style>
 </head>
 <body>
+  <div id="app">Loading...</div>
 
-  <!-- Dynamic Content -->
-  <div id="app">
-    <!-- Pages will be loaded here -->
-  </div>
-
-  <!-- Bottom Navigation -->
   <nav class="bottom-nav">
-    <a href="#dashboard" id="nav-dashboard"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
-    <a href="#palsur" id="nav-attendance"><i class="fa-solid fa-clipboard-check"></i><span>Attendance</span></a>
-    <a href="#totals" id="nav-totals"><i class="fa-solid fa-sack-dollar"></i><span>Totals</span></a>
-    <a href="#collection" id="nav-collection"><i class="fa-solid fa-box"></i><span>Collection</span></a>
-    <a href="#members" id="nav-members"><i class="fa-solid fa-users"></i><span>Members</span></a>
+    <a href="#dashboard"><i class="fa-solid fa-house"></i>Dashboard</a>
+    <a href="#attendance"><i class="fa-solid fa-clipboard-check"></i>Attendance</a>
+    <a href="#totals"><i class="fa-solid fa-sack-dollar"></i>Totals</a>
+    <a href="#collection"><i class="fa-solid fa-box"></i>Collection</a>
+    <a href="#members"><i class="fa-solid fa-users"></i>Members</a>
   </nav>
 
   <script>
     const routes = {
-      dashboard: 'pages/dashboard.html',
-      attendance: 'pages/palsur.html',
-      totals: 'pages/palsur.html',
-      collection: 'pages/collection.html',
-      members: 'pages/members.html'
+      dashboard: "pages/dashboard.html",
+      attendance: "pages/attendance.html",
+      totals: "pages/totals.html",
+      collection: "pages/collection.html",
+      members: "pages/members.html"
     };
 
-    const app = document.getElementById('app');
-
-    // Load page into #app
-    async function loadPage(page) {
+    async function loadPage(hash) {
+      const page = hash.replace("#", "") || "dashboard";
+      const url = routes[page] || "pages/dashboard.html";
       try {
-        const res = await fetch(routes[page]);
-        if (!res.ok) throw new Error("Page not found");
+        const res = await fetch(url);
         const html = await res.text();
-        app.innerHTML = html;
+        document.getElementById("app").innerHTML = html;
 
-        if (page === 'dashboard') loadDashboardMembers();
+        // Run any init function
+        if (page === "dashboard" && window.loadDashboardMembers) loadDashboardMembers();
+        if (page === "attendance" && window.initAttendancePage) initAttendancePage(); // 👈 for attendance
+
       } catch (err) {
-        app.innerHTML = "<h3>Page not found.</h3>";
+        document.getElementById("app").innerHTML = "<h3>Error loading page</h3>";
       }
     }
 
-    // Load members into dashboard
-    function loadDashboardMembers() {
-      const names = [
-        'Bikash Sitola','Durga Sharmah','Purna Chapagain','Raju Bajgain','Krishna Bajgain',
-        'Baburam Ram Poudel','Tanka Boral','Churamoni Ojha','Bikash Koirala','Dipak Koirala',
-        'Bhuban Sharmah','Tilaram Boral','Shyam Gurung','Binod Porajuli','Bhuban Sapkota',
-        'Surja Poudel','Khemraj Poudel','Prem Poudel','Rupnarayan Sitola','Keshab gajurel',
-        'Kishore Dahal','Khemraj Rijal','Sagar Sapkota','Lila Timsina','Ganesh Karki',
-        'Man Br Rai','Man Br Subba','Ganesh Dhungana','Hari Singh Mohora','Ram br basnet',
-        'Debi Prashad Dhakal','Sekhar Sharmah','Ramlal Dhakal','Durga timsina'
-      ];
-
-      const tableBody = document.getElementById('member-table-body');
-      if (!tableBody) return;
-
-      tableBody.innerHTML = names.map((name, i) => `
-        <tr>
-          <td>${i + 1}</td>
-          <td>${name}</td>
-          <td><button class="view-btn">View</button></td>
-        </tr>
-      `).join('');
-    }
-
-    // Routing setup
-    function handleHashChange() {
-      const page = location.hash.replace("#", "") || "dashboard";
-      loadPage(page);
-      updateActiveNav(page);
-    }
-
-    function updateActiveNav(page) {
-      document.querySelectorAll(".bottom-nav a").forEach(link => {
-        link.classList.remove("active");
-      });
-      const active = document.querySelector(`#nav-${page}`);
-      if (active) active.classList.add("active");
-    }
-
-    // Init
-    window.addEventListener("hashchange", handleHashChange);
-    handleHashChange(); // on load
+    window.addEventListener("hashchange", () => loadPage(location.hash));
+    window.addEventListener("DOMContentLoaded", () => loadPage(location.hash));
   </script>
-
 </body>
 </html>
