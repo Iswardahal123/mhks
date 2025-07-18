@@ -1,73 +1,63 @@
 <!-- pages/dashboard.html -->
-<div class="dashboard">
+<div style="padding: 10px;">
   <h2>Dashboard</h2>
-
-  <div class="table-container">
-    <table>
+  <div style="overflow-x: auto;">
+    <table id="memberTable" style="width: 100%; border-collapse: collapse;">
       <thead>
-        <tr>
-          <th>#</th>
-          <th>Name</th>
-          <th>Action</th>
+        <tr style="background-color: #000; color: #fff;">
+          <th style="padding: 10px;">Name</th>
+          <th>Status</th>
         </tr>
       </thead>
-      <tbody id="member-table-body">
-        <!-- Members will be inserted by JS -->
-      </tbody>
+      <tbody></tbody>
     </table>
   </div>
 </div>
 
-<style>
-  .dashboard h2 {
-    margin-bottom: 15px;
-    font-size: 22px;
-    color: #333;
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCyibssZJsYwzI_2VXwC98iUGix2IkFczM",
+    authDomain: "iswar-121d6.firebaseapp.com",
+    projectId: "iswar-121d6",
+    storageBucket: "iswar-121d6.appspot.com",
+    messagingSenderId: "696246777134",
+    appId: "1:696246777134:web:065951d401a56d8c7d76bf",
+    measurementId: "G-HG807RGEGJ"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const tbody = document.querySelector("#memberTable tbody");
+
+  async function loadData() {
+    try {
+      const querySnapshot = await getDocs(collection(db, "palsur"));
+      tbody.innerHTML = ""; // Clear previous rows
+
+      if (querySnapshot.empty) {
+        tbody.innerHTML = "<tr><td colspan='2' style='padding: 10px;'>No data found</td></tr>";
+        return;
+      }
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td style="padding: 8px;">${doc.id}</td>
+          <td>${data.attendance ? "Submitted" : "N/A"}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    } catch (error) {
+      console.error("Error loading dashboard data:", error);
+      tbody.innerHTML = "<tr><td colspan='2' style='padding: 10px;'>Error loading data</td></tr>";
+    }
   }
 
-  .table-container {
-    overflow-x: auto;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 400px;
-  }
-
-  th, td {
-    padding: 12px;
-    border-bottom: 1px solid #eee;
-    text-align: left;
-    font-size: 14px;
-  }
-
-  th {
-    background-color: #f6f6f6;
-    font-weight: 600;
-  }
-
-  tr:hover {
-    background-color: #f9f9f9;
-  }
-
-  .view-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 13px;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-
-  .view-btn:hover {
-    background-color: #0056b3;
-  }
-</style>
-
+  loadData();
+</script>
 
