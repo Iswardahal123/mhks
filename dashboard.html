@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f8f8f8;
+      padding-bottom: 70px; /* for bottom nav */
+    }
+
+    h2 {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    table {
+      width: 95%;
+      margin: 0 auto 100px;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      background: #007bff;
+      color: white;
+      font-weight: normal;
+    }
+
+    td button {
+      padding: 6px 12px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    td button:hover {
+      background: #0056b3;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: #fff;
+      border-top: 1px solid #ddd;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .bottom-nav a {
+      flex-grow: 1;
+      text-align: center;
+      text-decoration: none;
+      color: #555;
+      font-size: 12px;
+      padding-top: 5px;
+      transition: all 0.3s ease;
+    }
+
+    .bottom-nav a.active {
+      color: #007bff;
+    }
+
+    .bottom-nav svg {
+      display: block;
+      margin: 0 auto 3px;
+      fill: currentColor;
+    }
+
+    .bottom-nav a:hover {
+      color: #007bff;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Members Dashboard</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="name-table">
+      <!-- Names will be injected here -->
+    </tbody>
+  </table>
+
+  <!-- ✅ Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="#attendance" id="nav-attendance">
+      <svg width="24" height="24" viewBox="0 0 24 24"><path d="M4 4h16v2H4V4zm0 5h16v2H4V9zm0 5h10v2H4v-2z"/></svg>
+      <span>Attendance</span>
+    </a>
+    <a href="#totals" id="nav-totals">
+      <svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 17h18v2H3v-2zm0-5h12v2H3v-2zm0-5h6v2H3V7z"/></svg>
+      <span>Totals</span>
+    </a>
+    <a href="#dashboard" id="nav-dashboard" class="active">
+      <svg width="24" height="24" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>Dashboard</span>
+    </a>
+    <a href="#collection" id="nav-collection">
+      <svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 4h18v2H3zm0 5h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+      <span>Collection</span>
+    </a>
+    <a href="#members" id="nav-members">
+      <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 12c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4zm0-2a4 4 0 100-8 4 4 0 000 8z"/></svg>
+      <span>Members</span>
+    </a>
+  </nav>
+
+  <script>
+    // Fill table with names
+    const names = [
+      'Bikash Sitola','Durga Sharmah','Purna Chapagain','Raju Bajgain','Krishna Bajgain','Baburam Ram Poudel',
+      'Tanka Boral','Churamoni Ojha','Bikash Koirala','Dipak Koirala','Bhuban Sharmah','Tilaram Boral','Shyam Gurung',
+      'Binod Porajuli','Bhuban Sapkota','Surja Poudel','Khemraj Poudel','Prem Poudel','Rupnarayan Sitola',
+      'Keshab Gajurel','Kishore Dahal','Khemraj Rijal','Sagar Sapkota','Lila Timsina','Ganesh Karki',
+      'Man Br Rai','Man Br Subba','Ganesh Dhungana','Hari Singh Mohora','Ram Br Basnet','Debi Prashad Dhakal',
+      'Sekhar Sharmah','Ramlal Dhakal','Durga Timsina'
+    ];
+
+    const tbody = document.getElementById('name-table');
+    names.forEach(name => {
+      const row = document.createElement('tr');
+
+      const tdName = document.createElement('td');
+      tdName.textContent = name;
+
+      const tdAction = document.createElement('td');
+      tdAction.innerHTML = '<button>View</button>';
+
+      row.appendChild(tdName);
+      row.appendChild(tdAction);
+      tbody.appendChild(row);
+    });
+
+    // Active bottom nav update
+    const links = document.querySelectorAll('.bottom-nav a');
+    window.addEventListener('hashchange', () => {
+      links.forEach(link => link.classList.remove('active'));
+      const activeLink = document.querySelector(`.bottom-nav a[href="${location.hash}"]`);
+      if (activeLink) activeLink.classList.add('active');
+    });
+  </script>
+
+</body>
+</html>
